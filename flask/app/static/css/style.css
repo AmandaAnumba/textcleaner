@@ -1,0 +1,83 @@
+/* stylesheet for text cleaner project */
+
+
+* {
+	font-family: 'Open Sans', sans-serif;
+}
+
+#content {
+	padding-top: 10%;
+	width: 100%;
+	height: 100%;
+	z-index: 3;
+	background: white;
+}
+
+.header {
+	font-size: 5em;
+	font-weight: 700;
+	text-align: center;
+}
+
+.sub-header {
+	font-size: 1em;
+	font-weight: 300;
+	text-align: center;
+	letter-spacing: 2px;
+	padding: 0 0 3% 0;
+	color: #3C3C3C;
+}
+
+#textarea {
+	line-height: 1.42857143;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	min-height: 250px;
+	max-height: 300px;
+	padding: 6px 12px;
+	overflow-y: scroll;
+}
+
+form {
+	width: 40% !important;
+	margin-left: 5%;
+	float: left;
+}
+
+.form-control {
+	font-size: 13px !important;
+}
+
+#output {
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	float: right;
+	width: 40%;
+	height: auto;
+	/*box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);*/
+	margin-right: 5%;
+	font-size: 13px;
+	padding: 6px 12px;
+	max-height: 300px;
+	overflow-y: scroll;
+}
+
+.button {
+	width: 55%;
+	margin-top: 15px;
+	margin: 0 auto;
+}
+
+#submit {
+	padding: 5px 3px 5px 3px;
+}
+
+
+
+
+
+
