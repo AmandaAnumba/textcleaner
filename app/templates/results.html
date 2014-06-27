@@ -14,12 +14,14 @@
             
             <input type='hidden' id='box' name='text' />
 
-            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->
+            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->    
 
             <!-- BUTTONS -->
             <div class="button">
+                <button type="button" class="btn btn-default" id="clear">Clear</button>
                 <button type="submit" class="btn btn-primary" id="submit">Submit</button>
-            </div>   
+
+            </div>  
         </form>
 
         <div id="output">{{clean}}</div>
@@ -27,16 +29,28 @@
 </div>
 
 <script type="text/javascript">
+    $( "#submit" ).click(function() {
+        var text = $('#textarea').html();
+        // console.log(text);
+        $('#box').val(text);
+    });
+
+    $( "#clear" ).click(function() {
+        $('#textarea').empty();
+    });
+
     $(function() {
         var original = $('#textarea').text();
+        // console.log(original);
         $('#textarea').empty();
         $('#textarea').append(original);
 
         var output = $('#output').text();
+        // console.log(output);
         $('#output').empty();
         $('#output').append(output);
 
     });
-
+// $('#output').html($('#output').html().replace(/(<br>\s*){15,15}/g,'<br>'));
 </script>
 {% endblock %}

@@ -17,7 +17,7 @@ def index():
 
 @app.route('/results', methods=['POST'])
 def results():
-    time.sleep(5)
+    time.sleep(3)
     text = ""
     text = request.form['text']
     # print text
@@ -26,7 +26,8 @@ def results():
     # f.close()
 
     output = cleaner.clean(text)
-    
+    # print output
+
     return render_template('results.html', 
                             original = text,
                             clean = output)
