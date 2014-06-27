@@ -12,7 +12,7 @@ def clean(text):
 
 	for link in soup.find_all('a'):
 		# print link.attrs
-		link['style'] = 'color: #40A1D3; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4; text-decoration: none;'
+		link['style'] = 'color: rgb(64, 161, 211); font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4; text-decoration: none !important; font-weight: bold;'
 
 	for words in soup.find_all('span'):
 		words['style'] = 'color: #535353; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4;'
@@ -46,4 +46,3 @@ if __name__ == "__main__":
     main()
 
 
-    
