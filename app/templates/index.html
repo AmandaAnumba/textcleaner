@@ -5,7 +5,11 @@
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
-    
+    <div id="alert1" class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <strong>Heads Up! </strong> A draft already exists. <a href='{{ url_for("drafts") }}' onclick='openDraft();'> Click Here</a> to continue with it.
+    </div> 
+
     <!-- INPUT TEXT AREA -->
     <div id="wrapper_form">
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="content">
+    <!-- HEADER -->
+    <div class="header">Text Cleaner</div>
+    <div class="sub-header">enter the text below and hit submit to clean it</div>
+    
+    <!-- CONTENT AREA -->
+    <div id="wrapper_form">
+        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+            
+            <div id='textarea' contenteditable>{{original}}</div>
+            
+            <input type='hidden' id='box' name='text' />
+
+            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->    
+
+            <!-- BUTTONS -->
+            <div class="button">
+                <button type="button" class="btn btn-default" id="clear">Clear</button>
+                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+            </div>   
+        </form>
+
+        <!-- OUTPUT -->
+        <div id="output" contenteditable="true">{{clean}}</div>
+            
+        <div id="btn_group2">
+            <button type="button" class="btn btn-default" id="save">Save as Draft</button>
+            <button type="button" class="btn btn-default" id="delete">Delete this Draft</button>
+        </div>
+
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        console.log('here');
+        openDraft();
+    });
+</script>
+{% endblock %}

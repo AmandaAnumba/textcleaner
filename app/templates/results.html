@@ -5,7 +5,11 @@
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
-    
+
+    <!-- hidden content -->
+    <p id="draftname"></p>
+
+
     <!-- CONTENT AREA -->
     <div id="wrapper_form">
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
@@ -20,28 +24,59 @@
             <div class="button">
                 <button type="button" class="btn btn-default" id="clear">Clear</button>
                 <button type="submit" class="btn btn-primary" id="submit">Submit</button>
-            </div>  
+            </div>   
         </form>
 
         <!-- OUTPUT -->
-        <div id="output" contenteditable="true" class="ckeditor">{{clean}}</div>
+        <div id="output" contenteditable="true">{{clean}}</div>
+            
+        <div id="btn_group2">
+            <button type="button" class="btn btn-default" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
+        </div>
 
-        <!-- EDITOR BUTTONS -->
-        <!-- save, change color, change size 
-        <div id="editor_btns" class="btn-group-vertical">
-            <button type="button" class="btn btn-default" id="save"><span class='glyphicon glyphicon-floppy-disk'></span></button>
-            <button type="button" class="btn btn-default" id="bold"><span class='glyphicon glyphicon-bold'></span></button>
-            <button type="button" class="btn btn-default" id="italic"><span class='glyphicon glyphicon-italic'></span></button>
-            <button type="button" class="btn btn-default" id="save"><span class='glyphicon glyphicon-'></span></button>
-        </div>-->
+        <div class="alert alert-danger" role="alert" id="alert2"></div>
+
+        <p id="message"></p>
 
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4>Enter a name to save the draft</h4>
+                <input type="text" id="name" class="form-control" placeholder="ex: Weekly 7/12 OR draft1">
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+                <button type="button" class="btn btn-primary" id="savethis">Save this!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                Are you sure you want to delete this draft?
+                <div>
+                    <button type="button" class="btn btn-default" id="no" data-dismiss="modal">nope</button>
+                    <button type="button" class="btn btn-primary" id="yes">yeah</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
-    
-    CKEDITOR.disableAutoInline = true;
-    var editor = CKEDITOR.inline( document.getElementById( 'output' ) );
 
     $( "#submit" ).click(function() {
         var text = $('#textarea').html();
@@ -52,6 +87,23 @@
     $( "#clear" ).click(function() {
         $('#textarea').empty();
         $('#output').empty();
+    });
+
+    $( "#savethis" ).click(function() {
+        var name = $('#name').val();
+        console.log(name);
+        saveDraft(name);
+        $('#draftname').empty().html(name);
+        $('#saveModal').modal('hide');
+    });
+
+    $( "#yes" ).click(function() {
+        var name = $('#draftname').text();
+        console.log("deleted");
+        localStorage.removeItem(name);
+        console.log(localStorage);
+        $('#deleteModal').modal('hide');
+        stop();
     });
 
     $(function() {
@@ -65,12 +117,6 @@
         $('#output').empty();
         $('#output').append(output);
 
-    });
-
-    // functions for the editor styles
-    $( "#clear" ).click(function() {
-        $('#textarea').empty();
-        $('#output').empty();
     });
 </script>
 {% endblock %}
