@@ -6,7 +6,7 @@
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
     
-    <!-- INPUT TEXT AREA -->
+    <!-- CONTENT AREA -->
     <div id="wrapper_form">
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
             
@@ -20,15 +20,29 @@
             <div class="button">
                 <button type="button" class="btn btn-default" id="clear">Clear</button>
                 <button type="submit" class="btn btn-primary" id="submit">Submit</button>
-
             </div>  
         </form>
 
-        <div id="output">{{clean}}</div>
+        <!-- OUTPUT -->
+        <div id="output" contenteditable="true" class="ckeditor">{{clean}}</div>
+
+        <!-- EDITOR BUTTONS -->
+        <!-- save, change color, change size 
+        <div id="editor_btns" class="btn-group-vertical">
+            <button type="button" class="btn btn-default" id="save"><span class='glyphicon glyphicon-floppy-disk'></span></button>
+            <button type="button" class="btn btn-default" id="bold"><span class='glyphicon glyphicon-bold'></span></button>
+            <button type="button" class="btn btn-default" id="italic"><span class='glyphicon glyphicon-italic'></span></button>
+            <button type="button" class="btn btn-default" id="save"><span class='glyphicon glyphicon-'></span></button>
+        </div>-->
+
     </div>
 </div>
 
 <script type="text/javascript">
+    
+    CKEDITOR.disableAutoInline = true;
+    var editor = CKEDITOR.inline( document.getElementById( 'output' ) );
+
     $( "#submit" ).click(function() {
         var text = $('#textarea').html();
         // console.log(text);
@@ -52,6 +66,11 @@
         $('#output').append(output);
 
     });
-// $('#output').html($('#output').html().replace(/(<br>\s*){15,15}/g,'<br>'));
+
+    // functions for the editor styles
+    $( "#clear" ).click(function() {
+        $('#textarea').empty();
+        $('#output').empty();
+    });
 </script>
 {% endblock %}

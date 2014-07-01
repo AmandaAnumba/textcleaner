@@ -41,8 +41,8 @@
 }
 
 form {
-	width: 40% !important;
-	margin-left: 5%;
+	width: 45% !important;
+	margin-left: 4%;
 	float: left;
 }
 
@@ -57,10 +57,10 @@ form {
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	float: right;
-	width: 40%;
+	width: 45%;
 	height: auto;
 	/*box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);*/
-	margin-right: 5%;
+	margin-right: 4%;
 	font-size: 13px;
 	padding: 6px 12px;
 	/*min-height: 250px;*/
@@ -78,8 +78,9 @@ form {
 	padding: 10px 10px 8px 10px;
 }
 
-
-
+#editor_btns {
+	float: right;
+}
 
 
 
