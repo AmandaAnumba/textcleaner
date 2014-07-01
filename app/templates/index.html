@@ -6,8 +6,8 @@
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
     <div id="alert1" class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <strong>Heads Up! </strong> A draft already exists. <a href='{{ url_for("drafts") }}' onclick='openDraft();'> Click Here</a> to continue with it.
+        <!-- <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> -->
+        <strong>Heads Up! </strong> A draft already exists. <a href='{{ url_for("results") }}'> Click Here</a> to continue with it or <a href='#' id="fresh" data-dismiss="alert">here</a> to discard it and start fresh.
     </div> 
 
     <!-- INPUT TEXT AREA -->
@@ -38,6 +38,11 @@
         $('#box').val(text);
     });  
 
+    $('#fresh').click(function() {
+        localStorage.clear();
+        console.log('storage cleared');
+        console.log(localStorage);
+    }); 
 </script>
 
 {% endblock %}

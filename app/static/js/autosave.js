@@ -27,14 +27,18 @@ var timer;
 
 
 function saveDraft(name) {
-	var content = $('#output').html();
+	var editted = $('#output').html();
+	var orig = $('#textarea').html();
+	var content = [orig, editted];
 	var time = showTime();
 	console.log(time);
 	var msg = 'Draft Autosaved at ' + time;
 	$('#message').empty().html(msg);
 	$('#message').show();
-	setTimeout( "jQuery('#message').hide();", 5000 );
-	localStorage.setItem(name, content);
+	setTimeout( "jQuery('#message').hide();", 7000 );
+
+	// store the content
+	localStorage.setItem(name, JSON.stringify(content));
 
 	// save every 60 secs by calling the function
 	timer = window.setInterval(autosave, 60000);	
@@ -42,25 +46,33 @@ function saveDraft(name) {
 
 function autosave() {
 	var name = $('#draftname').text();
-	var content = $('#output').html();
+	var edit = $('#output').html();
+	var orig = $('#textarea').html();
+	var content = [orig, edit];
 	var time = showTime();
 	var msg = 'Draft Autosaved at ' + time;
 	$('#message').empty().html(msg);
 	$('#message').show();
-	setTimeout( "jQuery('#message').hide();", 5000 );
-	localStorage.setItem(name, content);
+	setTimeout( "jQuery('#message').hide();", 7000 );
+	localStorage.setItem(name, JSON.stringify(content));
 }
 
 function openDraft() {
 	console.log('here in function');
 	localStorage.removeItem("");
+	$('#output').empty();
+	$('#textarea').empty();
+	// var content = [];
 
 	if (localStorage.length == 1) {
 		var key = localStorage.key(0);
 		console.log(key);
-		var content = localStorage.getItem(key);
-		console.log(content);
-		$('#output').append(content);
+		var retrieved = localStorage.getItem(key);
+		// console.log(retrieved);
+
+		var content = JSON.parse(retrieved);
+		$('#output').append(content[1]);
+		$('#textarea').append(content[0]);
 		$('#draftname').html(key);
 	}
 
