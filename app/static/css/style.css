@@ -96,7 +96,7 @@
 		margin-right: 4%;
 	}
 
-	#submit, #clear, #save, #delete, #save2, #new, #trash {
+	#submit, #clear, #save, #new, #trash {
 		padding: 10px 10px 8px 10px;
 	}
 
@@ -164,7 +164,7 @@
 		display:none;
 	}
 
-	#editor {
+	.editor {
 		float: right;
 		width: 41%;
 		margin-right: 4%;
@@ -184,4 +184,19 @@
 		line-height: 1.4; 
 		text-decoration: none !important;
 		color: #535353 !important;
+	}
+
+	#btn_group2 > button > .glyphicon {
+		font-size: 1.3em;
+	}
+
+	.full {
+		margin-left: 10%;
+		margin-right: 10%;
+		float: none;
+		margin-bottom: 2%;
+	}
+
+	.shift {
+		margin-right: 10% !important;
 	}

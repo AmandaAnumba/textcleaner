@@ -27,17 +27,16 @@
         </form>
 
         <!-- OUTPUT -->
-        <section id="editor">
+        <section id="editor" class="editor">
             <div id='edit'></div>
         </section>
         
         <div id="btn_group2">
             <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
-            <button type="button" class="btn btn-primary" id="save2" onclick="autosave();">Save</button>
-            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
+            <button type="button" class="btn btn-default" id="save2" onclick="autosave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-edit"></span></button>
         </div>
-
-        <div class="alert alert-danger" role="alert" id="alert2"></div>
 
         <p id="message"></p>
 
@@ -126,6 +125,13 @@
         $('.froala-element').empty();
     });
 
+    $( "#full" ).click(function() {
+        $(this).toggleClass('active btn-primary');
+        $("form").toggle();
+        $('#editor').toggleClass('editor full');
+        $('#btn_group2').toggleClass('shift');
+    });
+
     // for the save modal
     $( "#savethis" ).click(function() {
         var name = $('#name').val();
@@ -152,6 +158,7 @@
 
     // on window load
     $(function() {
+        $("button").tooltip();
         if (localStorage.length == 0) {
             console.log("nothing in storage so loading the content");
             load();
@@ -164,7 +171,8 @@
             var content = JSON.parse(retrieved);
             $('#save').hide();
             $('#edit').editable({inlineMode: false, inverseSkin: true});
-            $('.froala-element').empty().append(content[1]);
+            $('.froala-element').empty();
+            $('.froala-element').append(content[1]);
             $('#textarea').append(content[0]);
         }
     });
