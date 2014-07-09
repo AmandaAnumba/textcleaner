@@ -1,16 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div id="content">
+<!-- SIDEBAR PANEL -->
+<div class="snap-drawers">
+    <div class="snap-drawer snap-drawer-right">
+        <div>
+            <div class="nav_header">Drafts Drawer</div>
+            <div class="nav_sub">quick access to your other saved drafts</div>
+            <div class="links"><ul></ul></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- CONTENT -->
+<div id="content" class="snap-content">
+    
+    <!-- FOR SIDEBAR -->
+    <div id="nav">
+        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+    </div>
+
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
     <div class="sub-header">for use with Constant Contact weekly emails</div>
     
-    <!-- hidden content -->
+    <!-- HIDDEN -->
     <p id="draftname">{{key}}</p>
 
-    <!-- CONTENT AREA -->
+    <!-- TEXT AREAS -->
     <div id="wrapper_form">
+        
+        <!-- INPUT -->
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
             
             <div id='textarea' contenteditable></div>
@@ -39,7 +60,6 @@
         </div>
 
         <p id="message"></p>
-
     </div>
 </div>
 
@@ -126,9 +146,9 @@
     });
 
     $( "#full" ).click(function() {
+        $('#editor').toggleClass('editor full');
         $(this).toggleClass('active btn-primary');
         $("form").toggle();
-        $('#editor').toggleClass('editor full');
         $('#btn_group2').toggleClass('shift');
         $('.froala-element').toggleClass('big');
     });
@@ -156,10 +176,18 @@
         stop();
     });
 
+    window.onload=function(){
+        $('.links>ul>li>a').click(function() {
+            var key = $( this ).attr("draftname");
+            console.log(key);
+            window.location = "/edits/"+key;   
+        });
+    };
 
     // on window load
     $(function() {
-        $("button").tooltip();
+        $("button, #menu").tooltip();
+        getDrafts2();
         if (localStorage.length == 0) {
             console.log("nothing in storage so loading the content");
             load();
@@ -191,6 +219,37 @@
         $('.froala-element').append(output);
         $('#save2').hide();
     }
+
+    var snapper = new Snap({
+        element: document.getElementById('content'),
+        disable: 'left',
+        touchToDrag: false
+    });
+
+    /*  create cross-browser event handler. */
+    var addEvent = function addEvent(element, eventName, func) {
+      if (element.addEventListener) {
+          return element.addEventListener(eventName, func, false);
+      } else if (element.attachEvent) {
+          return element.attachEvent("on" + eventName, func);
+      }
+    };
+
+    /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
+    addEvent(document.getElementById('menu'), 'click', function() {
+      snapper.open('right');
+    });
+
+    var menu = document.getElementById('menu');
+
+    menu.addEventListener('click', function(){
+      if( snapper.state().state=="right" ){
+          snapper.close();
+      } else {
+          snapper.open('right');
+      }
+
+    });
 
 </script>
 {% endblock %}

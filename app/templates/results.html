@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div id="content">
+<!-- SIDEBAR PANEL -->
+<div class="snap-drawers">
+    <div class="snap-drawer snap-drawer-right">
+        <div>
+            <div class="nav_header">Drafts Drawer</div>
+            <div class="nav_sub">quick access to your other saved drafts</div>
+            <div class="links"><ul></ul></div>
+        </div>
+    </div>
+</div>
+
+
+<div id="content" class="snap-content">
+    
+    <!-- FOR SIDEBAR -->
+    <div id="nav">
+        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+    </div>
+
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
     <div class="sub-header">for use with Constant Contact weekly emails</div>
@@ -33,8 +51,8 @@
         
         <div id="btn_group2">
             <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
-            <button type="button" class="btn btn-primary" id="save2" onclick="autosave();">Save</button>
-            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
+            <button type="button" class="btn btn-primary" id="save3" onclick="autosave();">Save</button>
+            <button type="button" class="btn btn-default" id="dump" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
         </div>
 
         <div class="alert alert-danger" role="alert" id="alert2"></div>
@@ -135,7 +153,7 @@
         saveDraft(name);
         $('#saveModal').modal('hide');
         $('#save').hide();
-        $('#save2').show();
+        $('#save3').show();
     });
 
 
@@ -159,6 +177,8 @@
 
     // on window load
     $(function() {
+        $("#menu").tooltip();
+        
         $('#edit').editable({inlineMode: false, inverseSkin: true});
         var original = $('#textarea').text();
         var output = $('.froala-element').text();
@@ -166,68 +186,50 @@
         $('.froala-element').empty();
         $('#textarea').append(original);
         $('.froala-element').append(output);
-        $('#save2').hide();
-        // $(".froala-element").children().each(function() {
-        //     $( this ).append( "<br><br>" );
-        // });
-        // $('#edit').editable({inlineMode: false, inverseSkin: true});
-        // if (localStorage.length == 0) {
-        //     console.log("nothing in storage so loading the content");
-        //     load();
-        // }
-
-        // else {
-        //     console.log("checking the strings");
-        //     var key = localStorage.key(0);
-        //     var retrieved = localStorage.getItem(key);
-        //     var content = JSON.parse(retrieved);
-        //     var orig = content[0]; // in html format
-        //     var out = content[1];
-        //     var timestamp = content[2];
-        //     var original = $('#textarea').text();
-        //     var output = $('#output').text();
-
-        //     $('#box').append(orig);
-        //     var newOrig = $('#box').text();
-        //     $('#box').append(orig);
-        //     var newOrig = $('#box').text();
-
-
-        //     if (newOrig == )
-        //     $('#textarea').append(original);
-
-            
-        //     // console.log(output);
-        //     $('#output').empty();
-        //     $('#output').append(output);
-        //     $('#save2').hide();
-
-        //     var now = new Date();
-            
-        //     console.log("now: "+now.getTime());
-        //     console.log("timestamp: "+timestamp);
-
-        //     if (now.getTime() > timestamp) {
-        //         // if the current time is newer than the time of 
-        //         console.log('adding saved content');
-        //         load();
-        //     }
-
-        //     else {
-        //         console.log('getting saved content');
-        //         $('#save').hide();
-        //         $('#output').append(content[1]);
-        //         $('#textarea').append(content[0]);
-        //         $('#draftname').html(key);
-        //     }
-            
-        // }
+        $('#save3').hide();
     });
 
+    window.onload=function(){
+        getDrafts2();
+        $('.links>ul>li>a').click(function() {
+            var key = $( this ).attr("draftname");
+            console.log(key);
+            window.location = "/edits/"+key;   
+        });
+    };
 
-    function load() {
-        
-    }
+
+    // =================  SIDEBAR  =================
+        var snapper = new Snap({
+            element: document.getElementById('content'),
+            disable: 'left',
+            touchToDrag: false
+        });
+
+        /*  create cross-browser event handler. */
+        var addEvent = function addEvent(element, eventName, func) {
+          if (element.addEventListener) {
+              return element.addEventListener(eventName, func, false);
+          } else if (element.attachEvent) {
+              return element.attachEvent("on" + eventName, func);
+          }
+        };
+
+        /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
+        addEvent(document.getElementById('menu'), 'click', function() {
+          snapper.open('right');
+        });
+
+        var menu = document.getElementById('menu');
+
+        menu.addEventListener('click', function(){
+          if( snapper.state().state=="right" ){
+              snapper.close();
+          } else {
+              snapper.open('right');
+          }
+
+        });
 
 </script>
 {% endblock %}

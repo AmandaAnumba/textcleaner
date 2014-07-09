@@ -104,6 +104,21 @@ function getDrafts() {
 	}	
 }
 
+function getDrafts2() {
+	console.log('Getting Draft...');
+	localStorage.removeItem("");
+	$('.links>ul').empty();
+
+	for (var i = 0, len = localStorage.length; i < len; ++i) {
+		var name = localStorage.key(i);
+		var count = i+1;
+		var retrieved = localStorage.getItem(name);
+		var content = JSON.parse(retrieved);
+		var date = new Date(content[2]);
+		var html = '<li><a href="#" draftname="'+name+'">'+name+'<p>'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</p></a></li>';
+		$('.links>ul').append(html);
+	}	
+}
 
 function showTime() {
 	var timeNow = new Date();
@@ -145,3 +160,62 @@ Date.prototype.customFormat = function(formatString){
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
 
+
+
+
+
+// $(".froala-element").children().each(function() {
+        //     $( this ).append( "<br><br>" );
+        // });
+        // $('#edit').editable({inlineMode: false, inverseSkin: true});
+        // if (localStorage.length == 0) {
+        //     console.log("nothing in storage so loading the content");
+        //     load();
+        // }
+
+        // else {
+        //     console.log("checking the strings");
+        //     var key = localStorage.key(0);
+        //     var retrieved = localStorage.getItem(key);
+        //     var content = JSON.parse(retrieved);
+        //     var orig = content[0]; // in html format
+        //     var out = content[1];
+        //     var timestamp = content[2];
+        //     var original = $('#textarea').text();
+        //     var output = $('#output').text();
+
+        //     $('#box').append(orig);
+        //     var newOrig = $('#box').text();
+        //     $('#box').append(orig);
+        //     var newOrig = $('#box').text();
+
+
+        //     if (newOrig == )
+        //     $('#textarea').append(original);
+
+            
+        //     // console.log(output);
+        //     $('#output').empty();
+        //     $('#output').append(output);
+        //     $('#save2').hide();
+
+        //     var now = new Date();
+            
+        //     console.log("now: "+now.getTime());
+        //     console.log("timestamp: "+timestamp);
+
+        //     if (now.getTime() > timestamp) {
+        //         // if the current time is newer than the time of 
+        //         console.log('adding saved content');
+        //         load();
+        //     }
+
+        //     else {
+        //         console.log('getting saved content');
+        //         $('#save').hide();
+        //         $('#output').append(content[1]);
+        //         $('#textarea').append(content[0]);
+        //         $('#draftname').html(key);
+        //     }
+            
+        // }
