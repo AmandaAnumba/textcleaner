@@ -200,3 +200,8 @@
 	.shift {
 		margin-right: 10% !important;
 	}
+
+	.big {
+		max-height: 320px !important;
+		overflow-y: scroll;
+	}
