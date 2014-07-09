@@ -6,11 +6,14 @@
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
     
+    <!-- hidden content -->
+    <p id="draftname">{{key}}</p>
+
     <!-- CONTENT AREA -->
     <div id="wrapper_form">
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
             
-            <div id='textarea' contenteditable>{{original}}</div>
+            <div id='textarea' contenteditable></div>
             
             <input type='hidden' id='box' name='text' />
 
@@ -24,20 +27,160 @@
         </form>
 
         <!-- OUTPUT -->
-        <div id="output" contenteditable="true">{{clean}}</div>
-            
+        <section id="editor">
+            <div id='edit'></div>
+        </section>
+        
         <div id="btn_group2">
-            <button type="button" class="btn btn-default" id="save">Save as Draft</button>
-            <button type="button" class="btn btn-default" id="delete">Delete this Draft</button>
+            <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+            <button type="button" class="btn btn-primary" id="save2" onclick="autosave();">Save</button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
         </div>
 
+        <div class="alert alert-danger" role="alert" id="alert2"></div>
+
+        <p id="message"></p>
 
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4>Enter a name to save the draft</h4>
+                <input type="text" id="name" class="form-control" placeholder="examples: weekly7/12, draft1, v1">
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+                <button type="button" class="btn btn-primary" id="savethis">Save it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                <h4>Are you sure you want to delete this draft? Here's what you're deleting:</h4>
+                <ul style="text-align:left;">
+                    <li><small>this current draft that's saved in your cache</small></li>
+                    <li><small>everything in the textboxes</small></li>
+                    <li><small>all traces of this draft's existence</small></li>
+                </ul>
+                <div>
+                    <button type="button" class="btn btn-primary" id="yes">Yeah, do it</button>
+                    <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
-    $(function() {
-        
+
+    // var editor = new TINY.editor.edit('editor', {
+    //     id: 'output',
+    //     width: '100%',
+    //     height: 200,
+    //     cssclass: 'tinyeditor',
+    //     controlclass: 'tinyeditor-control',
+    //     rowclass: 'tinyeditor-header',
+    //     dividerclass: 'tinyeditor-divider',
+    //     controls: ['bold', 'italic', 'underline', 'strikethrough', '|', 'subscript', 'superscript', '|',
+    //         'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
+    //         'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
+    //         'font', 'size', 'style', '|', 'image', 'hr', 'link', 'unlink', '|', 'print'],
+    //     footer: true,
+    //     fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
+    //     xhtml: true,
+    //     cssfile: 'custom.css',
+    //     bodyid: 'editor',
+    //     footerclass: 'tinyeditor-footer',
+    //     toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
+    //     resize: {cssclass: 'resize'}
+    // });
+
+    // for form submission
+    $( "#submit" ).click(function() {
+        var text = $('#textarea').html();
+        // console.log(text);
+        $('#box').val(text);
     });
+
+    $( "#clear" ).click(function() {
+        $('#textarea').empty();
+        $('#output').empty();
+    });
+
+    $('#fresh').click(function() {
+        localStorage.clear();
+        console.log('storage cleared');
+        console.log(localStorage);
+        $('#textarea').empty();
+        $('#output').empty();
+    });
+
+    // for the save modal
+    $( "#savethis" ).click(function() {
+        var name = $('#name').val();
+        console.log(name);
+        $('#draftname').empty().html(name);
+        saveDraft(name);
+        $('#saveModal').modal('hide');
+        $('#save').hide();
+        $('#save2').show();
+    });
+
+    // for the delete modal
+    $( "#yes" ).click(function() {
+        var name = $('#draftname').text();
+        console.log("deleted");
+        localStorage.removeItem(name);
+        console.log(localStorage);
+        $('#textarea').empty();
+        $('#output').empty();
+        $('#deleteModal').modal('hide');
+        stop();
+    });
+
+
+    // on window load
+    $(function() {
+        if (localStorage.length == 0) {
+            console.log("nothing in storage so loading the content");
+            load();
+        }
+
+        else {
+            console.log('loading the selected draft');
+            var key = $('#draftname').text();
+            var retrieved = localStorage.getItem(key);
+            var content = JSON.parse(retrieved);
+            $('#save').hide();
+            $('#edit').editable({inlineMode: false, inverseSkin: true});
+            $('#edit').empty().append(content[1]);
+            $('#textarea').append(content[0]);
+        }
+    });
+
+    function load() {
+        var original = $('#textarea').text();
+        // console.log(original);
+        $('#textarea').empty();
+        $('#textarea').append(original);
+
+        var output = $('#edit').text();
+        // console.log(output);
+        $('#edit').empty();
+        $('#edit').append(output);
+        $('#save2').hide();
+    }
+
 </script>
 {% endblock %}

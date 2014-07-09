@@ -4,11 +4,11 @@
 <div id="content">
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
-    <div class="sub-header">enter the text below and hit submit to clean it</div>
+    <div class="sub-header">for use with Constant Contact weekly emails</div> 
     <div id="alert1" class="alert alert-info">
         <!-- <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> -->
-        <strong>Heads Up! </strong> A draft already exists. <a href='{{ url_for("results") }}'> Click Here</a> to continue with it or <a href='#' id="fresh" data-dismiss="alert">here</a> to discard it and start fresh.
-    </div> 
+        <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, or start a new draft. 
+    </div>
 
     <!-- INPUT TEXT AREA -->
     <div id="wrapper_form">
@@ -28,21 +28,83 @@
 
         <div id="output"></div>
     </div>
+
+
+    <!-- LIST OF DRAFTS -->
+    <div id="wrapper_draft">
+        <table class="table table-condensed">
+            <tr>
+                <th>Saved Drafts</th>
+            </tr>
+        </table>
+
+        <div class="button">
+            <button type="button" class="btn btn-primary" id="new">Start a new draft</button>
+        </div>
+    </div>
 </div>
+
 
 <script type="text/javascript">
 
-    $( "#submit" ).click(function() {
+    $('#submit').click(function() {
         var text = $('#textarea').html();
         // console.log(text);
         $('#box').val(text);
     });  
 
-    $('#fresh').click(function() {
-        localStorage.clear();
-        console.log('storage cleared');
-        console.log(localStorage);
-    }); 
+    $("#new").click(function() {
+        $('#alert1').hide();
+        $('#wrapper_draft').hide();
+        $('#wrapper_form').show();
+        $('#textarea').empty();
+        $('#output').empty();
+    });
+
+    window.onload=function(){
+        $('.btn1').click(function() {
+            var key = $(this).attr("draftname");
+            window.location = "/edits/"+key;   
+        });
+
+        $('.btn2').click(function() {
+            var key = $( this ).attr("draftname");
+            console.log(key);
+            $(this).parent().slideUp("slow");
+            localStorage.removeItem(key);
+            console.log(localStorage);    
+        });
+    };
+
+
+    // to be executed on page load
+    $(function() {
+        // check if a draft exists
+        localStorage.removeItem("");
+
+        if (localStorage.length == 0){
+            // it does not exist
+            console.log("there's nothing in the localStorage");
+            $('#wrapper_draft').hide();
+            return
+        } 
+
+        if (localStorage.length == 1 && localStorage.getItem(localStorage.key(0)) === "") {
+            // it does not exist
+            console.log("there's nothing in the localStorage");
+            $('#wrapper_draft').hide();
+            return
+        }
+
+        else {
+            // a draft does exist
+            $('#wrapper_form').hide();
+            $('#wrapper_draft').show();
+            console.log(localStorage);
+            $('#alert1').show();
+            getDrafts();
+        }    
+    });
 </script>
 
 {% endblock %}

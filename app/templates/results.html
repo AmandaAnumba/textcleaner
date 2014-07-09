@@ -5,10 +5,9 @@
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
     <div class="sub-header">enter the text below and hit submit to clean it</div>
-
+    
     <!-- hidden content -->
     <p id="draftname"></p>
-
 
     <!-- CONTENT AREA -->
     <div id="wrapper_form">
@@ -28,8 +27,10 @@
         </form>
 
         <!-- OUTPUT -->
-        <div id="output" contenteditable="true">{{clean}}</div>
-            
+        <section id="editor">
+            <div id='edit'>{{clean}}</div>
+        </section>
+        
         <div id="btn_group2">
             <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
             <button type="button" class="btn btn-primary" id="save2" onclick="autosave();">Save</button>
@@ -43,7 +44,6 @@
     </div>
 </div>
 
-
 <!-- Modal -->
 <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -51,7 +51,7 @@
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <h4>Enter a name to save the draft</h4>
-                <input type="text" id="name" class="form-control" placeholder="examples: Weekly7/12, draft1, v1">
+                <input type="text" id="name" class="form-control" placeholder="examples: weekly7/12, draft1, v1">
             </div>
                 
             <div class="modal-footer">
@@ -83,26 +83,60 @@
 
 
 <script type="text/javascript">
-    
+
+    // var editor = new TINY.editor.edit('editor', {
+    //     id: 'output',
+    //     width: '100%',
+    //     height: 200,
+    //     cssclass: 'tinyeditor',
+    //     controlclass: 'tinyeditor-control',
+    //     rowclass: 'tinyeditor-header',
+    //     dividerclass: 'tinyeditor-divider',
+    //     controls: ['bold', 'italic', 'underline', 'strikethrough', '|', 'subscript', 'superscript', '|',
+    //         'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
+    //         'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
+    //         'font', 'size', 'style', '|', 'image', 'hr', 'link', 'unlink', '|', 'print'],
+    //     footer: true,
+    //     fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
+    //     xhtml: true,
+    //     cssfile: 'custom.css',
+    //     bodyid: 'editor',
+    //     footerclass: 'tinyeditor-footer',
+    //     toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
+    //     resize: {cssclass: 'resize'}
+    // });
+
+
+
     // for form submission
     $( "#submit" ).click(function() {
         var text = $('#textarea').html();
         // console.log(text);
         $('#box').val(text);
     });
+
     $( "#clear" ).click(function() {
         $('#textarea').empty();
         $('#output').empty();
     });
 
+    $('#fresh').click(function() {
+        localStorage.clear();
+        console.log('storage cleared');
+        console.log(localStorage);
+        $('#textarea').empty();
+        $('#output').empty();
+    });
 
     // for the save modal
     $( "#savethis" ).click(function() {
         var name = $('#name').val();
         console.log(name);
-        saveDraft(name);
         $('#draftname').empty().html(name);
+        saveDraft(name);
         $('#saveModal').modal('hide');
+        $('#save').hide();
+        $('#save2').show();
     });
 
 
@@ -121,24 +155,78 @@
 
     // on window load
     $(function() {
-        if (localStorage.length == 0) {
-            var original = $('#textarea').text();
-            // console.log(original);
-            $('#textarea').empty();
-            $('#textarea').append(original);
+        load();
+        $('#edit').editable({inlineMode: false, inverseSkin: true});
+        // if (localStorage.length == 0) {
+        //     console.log("nothing in storage so loading the content");
+        //     load();
+        // }
 
-            var output = $('#output').text();
-            // console.log(output);
-            $('#output').empty();
-            $('#output').append(output);
-            $('#save2').hide();
-        }
+        // else {
+        //     console.log("checking the strings");
+        //     var key = localStorage.key(0);
+        //     var retrieved = localStorage.getItem(key);
+        //     var content = JSON.parse(retrieved);
+        //     var orig = content[0]; // in html format
+        //     var out = content[1];
+        //     var timestamp = content[2];
+        //     var original = $('#textarea').text();
+        //     var output = $('#output').text();
 
-        else {
-            $('#save').hide();
-            console.log('here');
-            openDraft();
-        }
+        //     $('#box').append(orig);
+        //     var newOrig = $('#box').text();
+        //     $('#box').append(orig);
+        //     var newOrig = $('#box').text();
+
+
+        //     if (newOrig == )
+        //     $('#textarea').append(original);
+
+            
+        //     // console.log(output);
+        //     $('#output').empty();
+        //     $('#output').append(output);
+        //     $('#save2').hide();
+        //     var 
+        //     if 
+
+
+
+
+        //     var now = new Date();
+            
+        //     console.log("now: "+now.getTime());
+        //     console.log("timestamp: "+timestamp);
+
+        //     if (now.getTime() > timestamp) {
+        //         // if the current time is newer than the time of 
+        //         console.log('adding saved content');
+        //         load();
+        //     }
+
+        //     else {
+        //         console.log('getting saved content');
+        //         $('#save').hide();
+        //         $('#output').append(content[1]);
+        //         $('#textarea').append(content[0]);
+        //         $('#draftname').html(key);
+        //     }
+            
+        // }
     });
+
+    function load() {
+        var original = $('#textarea').text();
+        // console.log(original);
+        $('#textarea').empty();
+        $('#textarea').append(original);
+
+        var output = $('#edit').text();
+        // console.log(output);
+        $('#edit').empty();
+        $('#edit').append(output);
+        $('#save2').hide();
+    }
+
 </script>
 {% endblock %}

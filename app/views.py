@@ -14,9 +14,12 @@ app.secret_key = 'F34TF$($e34D'
 def index():
     return render_template('index.html')
 
-@app.route('/edits')
-def drafts():
-    return render_template('drafts.html')
+
+@app.route('/edits/<name>')
+def drafts(name):
+    key = name
+    return render_template('drafts.html',
+                            key = key)
 
 
 @app.route('/results', methods=['GET', 'POST'])
