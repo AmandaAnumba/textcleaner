@@ -6,7 +6,7 @@ var timer;
 
 
 function saveDraft(name) {
-	var editted = $('#edit').html();
+	var editted = $('.froala-element').html();
 	var orig = $('#textarea').html();
 	var timestamp = new Date().getTime();
 	var content = [orig, editted, timestamp];
@@ -28,13 +28,13 @@ function saveDraft(name) {
 
 function autosave() {
 	var name = $('#draftname').text();
-	var edit = $('#edit').html();
+	var edit = $('.froala-element').html();
 	var orig = $('#textarea').html();
 	var timestamp = new Date().getTime();
 	var content = [orig, edit, timestamp];
 
 	var time = showTime();
-	var msg = 'Draft Autosaved at ' + time;
+	var msg = 'Draft Saved at ' + time;
 	$('#message').empty().html(msg);
 	$('#message').show();
 	setTimeout( "jQuery('#message').hide();", 7000 );

@@ -4,7 +4,7 @@
 <div id="content">
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
-    <div class="sub-header">enter the text below and hit submit to clean it</div>
+    <div class="sub-header">for use with Constant Contact weekly emails</div>
     
     <!-- hidden content -->
     <p id="draftname">{{key}}</p>
@@ -115,7 +115,7 @@
 
     $( "#clear" ).click(function() {
         $('#textarea').empty();
-        $('#output').empty();
+        $('.froala-element').empty();
     });
 
     $('#fresh').click(function() {
@@ -123,7 +123,7 @@
         console.log('storage cleared');
         console.log(localStorage);
         $('#textarea').empty();
-        $('#output').empty();
+        $('.froala-element').empty();
     });
 
     // for the save modal
@@ -144,7 +144,7 @@
         localStorage.removeItem(name);
         console.log(localStorage);
         $('#textarea').empty();
-        $('#output').empty();
+        $('.froala-element').empty();
         $('#deleteModal').modal('hide');
         stop();
     });
@@ -164,10 +164,11 @@
             var content = JSON.parse(retrieved);
             $('#save').hide();
             $('#edit').editable({inlineMode: false, inverseSkin: true});
-            $('#edit').empty().append(content[1]);
+            $('.froala-element').empty().append(content[1]);
             $('#textarea').append(content[0]);
         }
     });
+
 
     function load() {
         var original = $('#textarea').text();
@@ -175,10 +176,10 @@
         $('#textarea').empty();
         $('#textarea').append(original);
 
-        var output = $('#edit').text();
+        var output = $('.froala-element').text();
         // console.log(output);
-        $('#edit').empty();
-        $('#edit').append(output);
+        $('.froala-element').empty();
+        $('.froala-element').append(output);
         $('#save2').hide();
     }
 

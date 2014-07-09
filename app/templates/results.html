@@ -4,7 +4,7 @@
 <div id="content">
     <!-- HEADER -->
     <div class="header">Text Cleaner</div>
-    <div class="sub-header">enter the text below and hit submit to clean it</div>
+    <div class="sub-header">for use with Constant Contact weekly emails</div>
     
     <!-- hidden content -->
     <p id="draftname"></p>
@@ -107,7 +107,6 @@
     // });
 
 
-
     // for form submission
     $( "#submit" ).click(function() {
         var text = $('#textarea').html();
@@ -117,7 +116,7 @@
 
     $( "#clear" ).click(function() {
         $('#textarea').empty();
-        $('#output').empty();
+        $('.froala-element').empty();
     });
 
     $('#fresh').click(function() {
@@ -125,7 +124,7 @@
         console.log('storage cleared');
         console.log(localStorage);
         $('#textarea').empty();
-        $('#output').empty();
+        $('.froala-element').empty();
     });
 
     // for the save modal
@@ -147,16 +146,31 @@
         localStorage.removeItem(name);
         console.log(localStorage);
         $('#textarea').empty();
-        $('#output').empty();
+        $('#.froala-element').empty();
         $('#deleteModal').modal('hide');
         stop();
     });
 
+    $( '#edit' ).one( "click", function() {
+        $(".froala-element").children().each(function() {
+            $( this ).append( "<br><br>" );
+        });
+    });
 
     // on window load
     $(function() {
-        load();
         $('#edit').editable({inlineMode: false, inverseSkin: true});
+        var original = $('#textarea').text();
+        var output = $('.froala-element').text();
+        $('#textarea').empty();
+        $('.froala-element').empty();
+        $('#textarea').append(original);
+        $('.froala-element').append(output);
+        $('#save2').hide();
+        // $(".froala-element").children().each(function() {
+        //     $( this ).append( "<br><br>" );
+        // });
+        // $('#edit').editable({inlineMode: false, inverseSkin: true});
         // if (localStorage.length == 0) {
         //     console.log("nothing in storage so loading the content");
         //     load();
@@ -187,11 +201,6 @@
         //     $('#output').empty();
         //     $('#output').append(output);
         //     $('#save2').hide();
-        //     var 
-        //     if 
-
-
-
 
         //     var now = new Date();
             
@@ -215,17 +224,9 @@
         // }
     });
 
-    function load() {
-        var original = $('#textarea').text();
-        // console.log(original);
-        $('#textarea').empty();
-        $('#textarea').append(original);
 
-        var output = $('#edit').text();
-        // console.log(output);
-        $('#edit').empty();
-        $('#edit').append(output);
-        $('#save2').hide();
+    function load() {
+        
     }
 
 </script>
