@@ -23,7 +23,7 @@ function savethis() {
     saveDraft(name);
     $('#saveModal').modal('hide');
     $('#save').hide();
-    $('#save3').show();
+    $('#save2').show();
 }
 
 // for the delete modal
@@ -93,8 +93,13 @@ function autosave() {
 function getDrafts() {
 	console.log('Getting Draft...');
 	localStorage.removeItem("");
+	var len = localStorage.length; 
 
-	for (var i = 0, len = localStorage.length; i < len; ++i) {
+	if (len >= 6) {
+		$('.table').popover('show');
+	}
+
+	for (var i = 0; i < len; ++i) {
 		var name = localStorage.key(i);
 		var count = i+1;
 		var retrieved = localStorage.getItem(name);

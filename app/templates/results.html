@@ -49,14 +49,15 @@
         </form>
 
         <!-- OUTPUT -->
-        <section class="editor">
+        <section id="editor" class="editor">
             <div id='edit'>{{clean}}</div>
         </section>
         
-        <div id="btn_group2">
+         <div id="btn_group2">
             <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
-            <button type="button" class="btn btn-primary" id="save3" onclick="autosave();">Save</button>
-            <button type="button" class="btn btn-default" id="dump" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
+            <button type="button" class="btn btn-default" id="save2" onclick="autosave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
         </div>
 
         <p id="message"></p>
@@ -108,6 +109,15 @@
         });
     });
 
+    $( "#full" ).click(function() {
+        $('#editor').toggleClass('editor full');
+        $(this).toggleClass('active btn-primary');
+        $("#full>span").toggleClass('glyphicon-resize-full glyphicon-resize-small');
+        $("form").toggle();
+        $('#btn_group2, #message').toggleClass('shift');
+        $('.froala-element').toggleClass('big');
+    });
+
     // on window load
     $(function() {
         $("#menu, #home").tooltip();
@@ -116,7 +126,7 @@
         var output = $('.froala-element').text();
         $('#textarea').empty().append(original);
         $('.froala-element').empty().removeClass('f-placeholder').append(output);
-        $('#save3').hide();
+        $('#save2').hide();
     });
 
 
