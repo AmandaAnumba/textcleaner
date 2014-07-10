@@ -17,7 +17,7 @@ function clear() {
 
 // for the save modal
 function savethis() {
-	var name = $('#name').val().replace(/\//g, "-");
+	var name = $('#name').val().replace(/[^\w\s\/]/gi, '').replace(/\//g, "-");
     console.log(name);
     $('#draftname').empty().html(name);
     saveDraft(name);
