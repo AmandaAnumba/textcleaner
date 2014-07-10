@@ -13,10 +13,12 @@
 </div>
 
 
+<!-- CONTENT -->
 <div id="content" class="snap-content">
     
     <!-- FOR SIDEBAR -->
     <div id="nav">
+        <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
         <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
     </div>
 
@@ -24,11 +26,13 @@
     <div class="header">Text Cleaner</div>
     <div class="sub-header">for use with Constant Contact weekly emails</div>
     
-    <!-- hidden content -->
+    <!-- HIDDEN -->
     <p id="draftname"></p>
 
-    <!-- CONTENT AREA -->
+    <!-- TEXT AREAS -->
     <div id="wrapper_form">
+
+        <!-- INPUT -->
         <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
             
             <div id='textarea' contenteditable>{{original}}</div>
@@ -39,8 +43,8 @@
 
             <!-- BUTTONS -->
             <div class="button">
-                <button type="button" class="btn btn-default" id="clear">Clear</button>
-                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                <!-- <button type="button" class="btn btn-default" id="clear" onclick="clear();">Clear</button> -->
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
             </div>   
         </form>
 
@@ -55,14 +59,11 @@
             <button type="button" class="btn btn-default" id="dump" data-toggle="modal" data-target="#deleteModal">Delete this Draft</button>
         </div>
 
-        <div class="alert alert-danger" role="alert" id="alert2"></div>
-
         <p id="message"></p>
-
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modals -->
 <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -74,7 +75,7 @@
                 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
-                <button type="button" class="btn btn-primary" id="savethis">Save it!</button>
+                <button type="button" class="btn btn-primary" id="savethis" onclick="savethis();">Save it!</button>
             </div>
         </div>
     </div>
@@ -91,7 +92,7 @@
                     <li><small>all traces of this draft's existence</small></li>
                 </ul>
                 <div>
-                    <button type="button" class="btn btn-primary" id="yes">Yeah, do it</button>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="deletethis();">Yeah, do it</button>
                     <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
                 </div>
             </div>
@@ -101,74 +102,6 @@
 
 
 <script type="text/javascript">
-
-    // var editor = new TINY.editor.edit('editor', {
-    //     id: 'output',
-    //     width: '100%',
-    //     height: 200,
-    //     cssclass: 'tinyeditor',
-    //     controlclass: 'tinyeditor-control',
-    //     rowclass: 'tinyeditor-header',
-    //     dividerclass: 'tinyeditor-divider',
-    //     controls: ['bold', 'italic', 'underline', 'strikethrough', '|', 'subscript', 'superscript', '|',
-    //         'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
-    //         'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
-    //         'font', 'size', 'style', '|', 'image', 'hr', 'link', 'unlink', '|', 'print'],
-    //     footer: true,
-    //     fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
-    //     xhtml: true,
-    //     cssfile: 'custom.css',
-    //     bodyid: 'editor',
-    //     footerclass: 'tinyeditor-footer',
-    //     toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
-    //     resize: {cssclass: 'resize'}
-    // });
-
-
-    // for form submission
-    $( "#submit" ).click(function() {
-        var text = $('#textarea').html();
-        // console.log(text);
-        $('#box').val(text);
-    });
-
-    $( "#clear" ).click(function() {
-        $('#textarea').empty();
-        $('.froala-element').empty();
-    });
-
-    $('#fresh').click(function() {
-        localStorage.clear();
-        console.log('storage cleared');
-        console.log(localStorage);
-        $('#textarea').empty();
-        $('.froala-element').empty();
-    });
-
-    // for the save modal
-    $( "#savethis" ).click(function() {
-        var name = $('#name').val();
-        console.log(name);
-        $('#draftname').empty().html(name);
-        saveDraft(name);
-        $('#saveModal').modal('hide');
-        $('#save').hide();
-        $('#save3').show();
-    });
-
-
-    // for the delete modal
-    $( "#yes" ).click(function() {
-        var name = $('#draftname').text();
-        console.log("deleted");
-        localStorage.removeItem(name);
-        console.log(localStorage);
-        $('#textarea').empty();
-        $('#.froala-element').empty();
-        $('#deleteModal').modal('hide');
-        stop();
-    });
-
     $( '#edit' ).one( "click", function() {
         $(".froala-element").children().each(function() {
             $( this ).append( "<br><br>" );
@@ -177,26 +110,14 @@
 
     // on window load
     $(function() {
-        $("#menu").tooltip();
-        
+        $("#menu, #home").tooltip();
         $('#edit').editable({inlineMode: false, inverseSkin: true});
         var original = $('#textarea').text();
         var output = $('.froala-element').text();
-        $('#textarea').empty();
-        $('.froala-element').empty();
-        $('#textarea').append(original);
-        $('.froala-element').append(output);
+        $('#textarea').empty().append(original);
+        $('.froala-element').empty().removeClass('f-placeholder').append(output);
         $('#save3').hide();
     });
-
-    window.onload=function(){
-        getDrafts2();
-        $('.links>ul>li>a').click(function() {
-            var key = $( this ).attr("draftname");
-            console.log(key);
-            window.location = "/edits/"+key;   
-        });
-    };
 
 
     // =================  SIDEBAR  =================

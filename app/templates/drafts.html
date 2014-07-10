@@ -18,6 +18,7 @@
     
     <!-- FOR SIDEBAR -->
     <div id="nav">
+        <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
         <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
     </div>
 
@@ -42,8 +43,8 @@
 
             <!-- BUTTONS -->
             <div class="button">
-                <button type="button" class="btn btn-default" id="clear">Clear</button>
-                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                <!-- <button type="button" class="btn btn-default" id="clear" onclick="clear();">Clear</button> -->
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
             </div>   
         </form>
 
@@ -56,14 +57,14 @@
             <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
             <button type="button" class="btn btn-default" id="save2" onclick="autosave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
             <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
-            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-edit"></span></button>
+            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
         </div>
 
         <p id="message"></p>
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modals -->
 <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -75,7 +76,7 @@
                 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
-                <button type="button" class="btn btn-primary" id="savethis">Save it!</button>
+                <button type="button" class="btn btn-primary" id="savethis" onclick="savethis();">Save it!</button>
             </div>
         </div>
     </div>
@@ -92,7 +93,7 @@
                     <li><small>all traces of this draft's existence</small></li>
                 </ul>
                 <div>
-                    <button type="button" class="btn btn-primary" id="yes">Yeah, do it</button>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="deletethis();">Yeah, do it</button>
                     <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
                 </div>
             </div>
@@ -102,154 +103,59 @@
 
 
 <script type="text/javascript">
-
-    // var editor = new TINY.editor.edit('editor', {
-    //     id: 'output',
-    //     width: '100%',
-    //     height: 200,
-    //     cssclass: 'tinyeditor',
-    //     controlclass: 'tinyeditor-control',
-    //     rowclass: 'tinyeditor-header',
-    //     dividerclass: 'tinyeditor-divider',
-    //     controls: ['bold', 'italic', 'underline', 'strikethrough', '|', 'subscript', 'superscript', '|',
-    //         'orderedlist', 'unorderedlist', '|', 'outdent', 'indent', '|', 'leftalign',
-    //         'centeralign', 'rightalign', 'blockjustify', '|', 'unformat', '|', 'undo', 'redo', 'n',
-    //         'font', 'size', 'style', '|', 'image', 'hr', 'link', 'unlink', '|', 'print'],
-    //     footer: true,
-    //     fonts: ['Verdana','Arial','Georgia','Trebuchet MS'],
-    //     xhtml: true,
-    //     cssfile: 'custom.css',
-    //     bodyid: 'editor',
-    //     footerclass: 'tinyeditor-footer',
-    //     toggle: {text: 'source', activetext: 'wysiwyg', cssclass: 'toggle'},
-    //     resize: {cssclass: 'resize'}
-    // });
-
-    // for form submission
-    $( "#submit" ).click(function() {
-        var text = $('#textarea').html();
-        // console.log(text);
-        $('#box').val(text);
-    });
-
-    $( "#clear" ).click(function() {
-        $('#textarea').empty();
-        $('.froala-element').empty();
-    });
-
-    $('#fresh').click(function() {
-        localStorage.clear();
-        console.log('storage cleared');
-        console.log(localStorage);
-        $('#textarea').empty();
-        $('.froala-element').empty();
-    });
-
+    
     $( "#full" ).click(function() {
         $('#editor').toggleClass('editor full');
         $(this).toggleClass('active btn-primary');
+        $("#full>span").toggleClass('glyphicon-resize-full glyphicon-resize-small');
         $("form").toggle();
         $('#btn_group2').toggleClass('shift');
         $('.froala-element').toggleClass('big');
     });
 
-    // for the save modal
-    $( "#savethis" ).click(function() {
-        var name = $('#name').val();
-        console.log(name);
-        $('#draftname').empty().html(name);
-        saveDraft(name);
-        $('#saveModal').modal('hide');
-        $('#save').hide();
-        $('#save2').show();
-    });
-
-    // for the delete modal
-    $( "#yes" ).click(function() {
-        var name = $('#draftname').text();
-        console.log("deleted");
-        localStorage.removeItem(name);
-        console.log(localStorage);
-        $('#textarea').empty();
-        $('.froala-element').empty();
-        $('#deleteModal').modal('hide');
-        stop();
-    });
-
-    window.onload=function(){
-        $('.links>ul>li>a').click(function() {
-            var key = $( this ).attr("draftname");
-            console.log(key);
-            window.location = "/edits/"+key;   
-        });
-    };
-
     // on window load
     $(function() {
-        $("button, #menu").tooltip();
-        getDrafts2();
-        if (localStorage.length == 0) {
-            console.log("nothing in storage so loading the content");
-            load();
-        }
-
-        else {
-            console.log('loading the selected draft');
-            var key = $('#draftname').text();
-            var retrieved = localStorage.getItem(key);
-            var content = JSON.parse(retrieved);
-            $('#save').hide();
-            $('#edit').editable({inlineMode: false, inverseSkin: true});
-            $('.froala-element').empty();
-            $('.froala-element').append(content[1]);
-            $('#textarea').append(content[0]);
-        }
+        $("button, #menu, #home").tooltip();
+        $('#edit').editable({inlineMode: false, inverseSkin: true});
+        var key = $('#draftname').text();
+        var retrieved = localStorage.getItem(key);
+        var content = JSON.parse(retrieved);
+        $('#save').hide();
+        $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
+        $('#textarea').append(content[0]);
     });
 
+    // =================  SIDEBAR  =================
+        var snapper = new Snap({
+            element: document.getElementById('content'),
+            disable: 'left',
+            touchToDrag: false
+        });
 
-    function load() {
-        var original = $('#textarea').text();
-        // console.log(original);
-        $('#textarea').empty();
-        $('#textarea').append(original);
+        /*  create cross-browser event handler. */
+        var addEvent = function addEvent(element, eventName, func) {
+          if (element.addEventListener) {
+              return element.addEventListener(eventName, func, false);
+          } else if (element.attachEvent) {
+              return element.attachEvent("on" + eventName, func);
+          }
+        };
 
-        var output = $('.froala-element').text();
-        // console.log(output);
-        $('.froala-element').empty();
-        $('.froala-element').append(output);
-        $('#save2').hide();
-    }
-
-    var snapper = new Snap({
-        element: document.getElementById('content'),
-        disable: 'left',
-        touchToDrag: false
-    });
-
-    /*  create cross-browser event handler. */
-    var addEvent = function addEvent(element, eventName, func) {
-      if (element.addEventListener) {
-          return element.addEventListener(eventName, func, false);
-      } else if (element.attachEvent) {
-          return element.attachEvent("on" + eventName, func);
-      }
-    };
-
-    /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
-    addEvent(document.getElementById('menu'), 'click', function() {
-      snapper.open('right');
-    });
-
-    var menu = document.getElementById('menu');
-
-    menu.addEventListener('click', function(){
-      if( snapper.state().state=="right" ){
-          snapper.close();
-      } else {
+        /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
+        addEvent(document.getElementById('menu'), 'click', function() {
           snapper.open('right');
-      }
+        });
 
-    });
+        var menu = document.getElementById('menu');
+
+        menu.addEventListener('click', function(){
+          if( snapper.state().state=="right" ){
+              snapper.close();
+          } else {
+              snapper.open('right');
+          }
+
+        });
 
 </script>
 {% endblock %}

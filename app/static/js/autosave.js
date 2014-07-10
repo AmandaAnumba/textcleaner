@@ -4,6 +4,48 @@
 
 var timer;
 
+function submitthis() {
+	var text = $('#textarea').html();
+    // console.log(text);
+    $('#box').val(text);
+}
+
+function clear() {
+	$('#textarea').empty();
+    $('.froala-element').empty();
+}
+
+// for the save modal
+function savethis() {
+	var name = $('#name').val().replace("/", "-");
+    console.log(name);
+    $('#draftname').empty().html(name);
+    saveDraft(name);
+    $('#saveModal').modal('hide');
+    $('#save').hide();
+    $('#save3').show();
+}
+
+// for the delete modal
+function deletethis() {
+    var name = $('#draftname').text();
+    console.log("deleted");
+    localStorage.removeItem(name);
+    console.log(localStorage);
+    $('#textarea').empty();
+    $('.froala-element').empty();
+    $('#deleteModal').modal('hide');
+    stop();
+}
+
+window.onload=function(){
+	getDrafts2();
+    $('.links>ul>li>a').click(function() {
+        var key = $( this ).attr("draftname");
+        console.log(key);
+        window.location = "/edits/"+key;   
+    });
+};
 
 function saveDraft(name) {
 	var editted = $('.froala-element').html();
@@ -45,45 +87,6 @@ function autosave() {
 	else {
 		return
 	}
-}
-
-
-function openDraft(key) {
-	console.log('Opening Draft...');
-	localStorage.removeItem("");
-	$('#output').empty();
-	$('#textarea').empty();
-	$('#draft').empty();
-
-	var retrieved = localStorage.getItem(key);
-	var content = JSON.parse(retrieved);
-	$('#output').append(content[1]);
-	$('#textarea').append(content[0]);
-	$('#draftname').html(key);
-
-	// if (localStorage.length == 1) {
-		// var key = localStorage.key(0);
-		// console.log("draft name : "+key);
-		// var retrieved = localStorage.getItem(key);
-		// // console.log(retrieved);
-
-		// var content = JSON.parse(retrieved);
-		// $('#output').append(content[1]);
-		// $('#textarea').append(content[0]);
-		// $('#draft').append(content[1]);
-		// $('#draftname').html(key);
-	// }
-
-	// else {
-	// 	for (var i = 0, len = localStorage.length; i < len; ++i) {
-	// 		var key = localStorage.key(i);
-	// 		console.log(key);
-	// 		// var content = localStorage.getItem(key);
-	// 		// console.log(content);
-	// 		// $('#output').append(content);
-	// 		// $('#draftname').html(key);
-	// 	}
-	// }	
 }
 
 
@@ -163,7 +166,7 @@ Date.prototype.customFormat = function(formatString){
 
 
 
-
+// old stuff
 // $(".froala-element").children().each(function() {
         //     $( this ).append( "<br><br>" );
         // });
