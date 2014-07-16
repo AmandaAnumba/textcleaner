@@ -3,23 +3,24 @@
     <head>
         <!-- files to be loaded first -->
         <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//www.parsecdn.com/js/parse-1.2.19.min.js"></script>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-        <title>Text Cleaner</title>
-
+        <title>Editor</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='plugins/Bootstrap/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='plugins/Bootstrap/css/bootstrap-theme.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='plugins/tinyeditor/tinyeditor.css') }}" /> -->
         <link rel="stylesheet" href="{{ url_for('static', filename='plugins/froala/css/font-awesome.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='plugins/froala/css/froala_editor.min.css') }}" />
-
+        <link rel="stylesheet" href="{{ url_for('static', filename='plugins/SplitLayout/css/component.css') }}" />
         <script src="{{ url_for('static', filename='plugins/Bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='plugins/froala/js/froala_editor.min.js') }}"></script>
-        <!-- <script src="{{ url_for('static', filename='plugins/tinyeditor/tiny.editor.packed.js') }}"></script> -->
+        <script src="{{ url_for('static', filename='plugins/SplitLayout/js/modernizr.custom.js') }}"></script>
         <script src="{{ url_for('static', filename='js/autosave.js') }}"></script>
         <script src="{{ url_for('static', filename='js/snap.js') }}"></script>
+        <script type="text/javascript">
+            Parse.initialize("r2WqnpadiFgY9rDIKvuSSl1NfdiOS3CwhOszrc07", "jXVABqVoW5EdV25d3pNblOyq3Bxy5oz6QQBooKnb");
+        </script>
     </head>
 
     <body>

@@ -27,6 +27,17 @@
 		font-family: 'Open Sans', sans-serif;
 	}
 
+	.label_t {
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		font-size: 1em;
+		padding: 0;
+		margin:0;
+		color: #3C3C3C;
+		font-family: 'Open Sans', sans-serif;
+	}
+
 	button {
 		font-family: 'Open Sans', sans-serif;
 	}
@@ -67,7 +78,7 @@
 /* ------------- output text area -------------- */
 /* --------------------------------------------- */
 	#wrapper_draft{
-		width: 50%;
+		width: 60%;
 		margin: 0 auto;
 		font-family: 'Open Sans', sans-serif;
 	}
@@ -96,16 +107,18 @@
 		margin-right: 4%;
 	}
 
-	#submit, #clear, #save, #new, #trash {
+	#submit, #new, #trash, #save {
 		padding: 10px 10px 8px 10px;
+	}
+
+	#save2, #delete, #clear, #comment, #full {
+		padding: 9px 15px 9px 15px;
 	}
 
 	.alert {
 		display: none;
-		margin-left: 20%;
-		margin-right: 20%;
+		margin: 0% 20% 3% 20%;
 		text-align: center;
-		margin-bottom: 3%;
 		font-family: 'Open Sans', sans-serif;
 	}
 
@@ -123,7 +136,7 @@
 		font-family: 'Open Sans', sans-serif;
 	}
 
-	#draftname {
+	#draftname, #id {
 		display: none;
 	}
 
@@ -151,6 +164,9 @@
 		width: 30px;
 	}
 
+	th {
+		text-transform: uppercase;
+	}
 
 
 /* --------------- text editors ---------------- */
@@ -176,7 +192,6 @@
 	}
 
 	.froala-element.f-basic {
-		max-height: 270px;
 		overflow-y: scroll;
 	}
 
@@ -219,6 +234,25 @@
 	}
 
 
+/* ------------------- front ------------------- */
+/* --------------------------------------------- */
+	#editor_wrapper {
+		margin: 15% 14% 0 14%;
+	}
+
+	#edit2 {
+		resize:vertical;
+	}
+
+	#btn_group3 {
+		float: left;
+		margin-left: 14%;
+		margin-top: 2%;
+	}
+
+	#wrapper_form {
+		/*margin: 13% 0 0 0;*/
+	}
 
 /* -------------------- SIDEBAR  ---------------------- */
 /* ==================================================== */
@@ -230,8 +264,8 @@
 
 	#home {
 		float: left;
-        margin-right: 15px;
-        padding: 2px 10px 2px 17px;
+        margin-right: 20px;
+        padding: 2px 10px 2px 20px;
         color: black;
         text-decoration: none;
         font-size: 1.6em;
@@ -340,7 +374,7 @@
         text-transform: uppercase;
         letter-spacing: 1.1px;
         padding-top: 3%;
-        padding-bottom: 3%;
+        padding-bottom: 5%;
         text-shadow: none;
     }
 
@@ -355,7 +389,7 @@
     }
 
     .snap-drawer a:hover {
-        border-bottom: 2px solid #FFBF6B;
+        border-bottom: 2px solid #40A1D3;
         color: white !important;
         text-decoration: none;
         background: black;
@@ -364,4 +398,9 @@
     .snap-drawer a:active {
         background: #afdefa;
         color: #47a3da;
+    }
+
+    li>a>p {
+    	padding: 0;
+    	margin: 0;
     }

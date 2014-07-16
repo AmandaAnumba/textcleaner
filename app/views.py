@@ -15,6 +15,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/new')
+def blank():
+    return render_template('blank.html')
+
+
 @app.route('/edits/<name>')
 def drafts(name):
     key = name

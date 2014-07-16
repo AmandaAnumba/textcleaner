@@ -1,55 +1,242 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div id="content">
-    <!-- HEADER -->
-    <div class="header">Text Cleaner</div>
-    <div class="sub-header">for use with Constant Contact weekly emails</div> 
-    <div id="alert1" class="alert alert-info">
-        <!-- <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> -->
-        <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, or start a new draft. 
-    </div>
-
-    <!-- INPUT TEXT AREA -->
-    <div id="wrapper_form">
-        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+<!-- CLEAN TEXT OR START DRAFT -->
+<div class="container">
+    <div id="splitlayout" class="splitlayout">
+        
+        <!-- THE FRONT/INTRO -->
+        <div class="intro">
+            <div class="side side-left">
+                <div class="intro-content">
+                    <div class="profile">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-file-text fa-stack-1x" style="color: #707070;"></i>
+                        </span>
+                    </div>
+                    <h1><span>Write </span><span>click here to write into the text editor</span></h1>
+                </div>
+                <div class="overlay"></div>
+            </div>
             
-            <div id='textarea' contenteditable></div>
-            
-            <input type='hidden' id='box' name='text' />
+            <div class="side side-right">
+                <div class="intro-content">
+                    <div class="profile">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </div>
+                    <h1><span>Continue </span><span>edit a draft or click to format new text</span></h1>
+                </div>
+                <div class="overlay"></div>
+            </div>
+        </div>
 
-            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->
+        <!-- RIGHT SIDE -->
+        <div class="page page-right">
+            <div class="page-inner">
+                <div id="content">
+                    <!-- HEADER  -->
+                    <div id="wrapper_header">
+                        <div class="header">Editor</div>
+                        <div class="sub-header">editting and formatting Constant Contact weekly emails</div> 
+                        <a href="#" class="back back-left" title="back to home"><i class="fa fa-chevron-left back-left"></i></a>
+                        <div id="alert1" class="alert alert-info"> 
+                            <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, or start a new draft.
+                        </div> 
+                    </div>
 
-            <!-- BUTTONS -->
-            <div class="button">
-                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
-            </div>   
-        </form>
+                    <!--INPUT TEXT AREA -->
+                    <div id="wrapper_form">
+                        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+                            <p class="label_t" style="text-align:left;">enter text here</p>
+                            <div id='textarea' contenteditable></div>
+                            
+                            <input type='hidden' id='box' name='text' />
 
-        <div id="output"></div>
+                            <!-- BUTTONS -->
+                            <div class="button">
+                                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                            </div>   
+                        </form>
+
+                        <div id="wrapper_output">
+                            <p class="label_t" style="text-align:right; margin-right: 4%;">formatted text appears here</p>
+                            <div id="output"></div>
+                        </div>
+                    </div>
+
+
+                    <!-- LIST OF DRAFTS -->
+                    <div id="wrapper_draft">
+                        <table class="table table-condensed">
+                            <tr>
+                                <th>Draft Name</th>
+                                <th>Last Saved</th>
+                                <th>Author</th>
+                            </tr>
+                        </table>
+
+                        <div class="button">
+                            <button type="button" class="btn btn-primary" id="new">Start a new draft</button>
+                        </div>
+                    </div>
+                </div>
+            </div>      
+        </div>
+
+        <!-- LEFT SIDE -->
+        <div class="page page-left">
+            <div class="page-inner">
+                <a href="#" class="back back-right" title="back to home" id="backhome"><i class="fa fa-chevron-right back-right"></i></a>
+                
+                <section id="editor_wrapper">
+                    <div id='edit2'></div>
+                </section>
+        
+                <div id="btn_group3">
+                    <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+                    <button type="button" class="btn btn-default" id="clear" data-toggle="tooltip" data-placement="bottom" title="clear the textbox"><i class="fa fa-magic"></i></button>
+                    <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+                    <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+                    <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
+                </div>
+
+                <p id="message" style="float:left; margin-left:14%;"></p>
+                <p id="draftname"></p>
+            </div>
+        </div>
+
     </div>
+</div>
 
 
-    <!-- LIST OF DRAFTS -->
-    <div id="wrapper_draft">
-        <table class="table table-condensed" title="Good Housekeeping..." data-content="Tip: Try to have no more than 6 saved drafts in the list.">
-            <tr>
-                <th>Saved Drafts</th>
-            </tr>
-        </table>
+<script src="{{ url_for('static', filename='plugins/SplitLayout/js/classie.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/SplitLayout/js/cbpSplitLayout.js') }}"></script>
 
-        <div class="button">
-            <button type="button" class="btn btn-primary" id="new">Start a new draft</button>
+
+<!-- Modals -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <div class="form-group">
+                    <label for="name4draft">Name this draft</label>
+                    <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-"</small></p>
+                </div>
+                <div class="form-group">
+                    <label for="username">Your Name</label>
+                    <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+                <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                <h4>Are you sure you want to delete this? Here's what you're deleting:</h4>
+                <ul style="text-align:left;">
+                    <li><small>everything in this textbox</small></li>
+                    <li><small>this current draft that's saved in the database</small></li>
+                    <li><small>all traces of this draft's existence</small></li>
+                </ul>
+                <div>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="b4delete();">Yeah, do it</button>
+                    <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                <div class="form-group">
+                    <h4>Add a comment to this draft for others to see</h4>
+                    <textarea class="form-control" rows="3" style="resize:vertical;"></textarea>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" id="yesadd" onclick="add_comment();">Add Comment</button>
+                    <button type="button" class="btn btn-default" id="dontadd" data-dismiss="modal">Nevermind</button>   
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 
 <script type="text/javascript">
+    // to be executed as page loads
+    $(function() {
+        $("button").tooltip();
+        $('#edit2').editable({inlineMode: false, inverseSkin: true});
+        $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
+        $('#save2, #delete, #comment').hide(); 
+        var query = new Parse.Query('drafts');
+        query.find({
+            success: function(results) {
+                if (results.length == 0) {
+                    console.log("there's nothing in the database");
+                    $('#wrapper_draft, #alert1').hide();
+                    $('#wrapper_form').show();
+                    return
+                }
+                else {
+                    $('#wrapper_form').hide();
+                    $('#wrapper_draft, #alert1').show();
+                    getDrafts();
+                }
+            },
+            error: function(error) {
+                console.log('error')
+            }
+        });
+    });
+
+    setTimeout(function() {
+        var btn1 = document.getElementsByClassName("btn1"),
+            btn2 = document.getElementsByClassName("btn2");
+        // console.log(btn1.length);
+
+        var btn1_click = function() {
+            var key = this.getAttribute("draftname");
+            console.log(key);
+            window.location = "/edits/"+key; 
+        };
+
+        var btn2_click = function() {
+            var key = this.getAttribute("draftname");
+            console.log(key);
+            $(this).parent().slideUp("slow");
+            deletethis(key); 
+        };
+
+        for (var i = 0; i < btn1.length; i++){
+            btn1[i].addEventListener('click', btn1_click, false);
+        }
+
+        for (var j = 0; j < btn2.length; j++){
+            btn2[j].addEventListener('click', btn2_click, false);
+        }
+    }, 1000);
+
 
     $('#submit').click(function() {
         var text = $('#textarea').html();
-        // console.log(text);
         $('#box').val(text);
     });  
 
@@ -61,50 +248,19 @@
         $('#output').empty();
     });
 
-    window.onload=function(){
-        $('.btn1').click(function() {
-            var key = $(this).attr("draftname");
-            window.location = "/edits/"+key;   
-        });
+    document.getElementById("clear").addEventListener('click', clear, false);
 
-        $('.btn2').click(function() {
-            var key = $( this ).attr("draftname");
-            console.log(key);
-            $(this).parent().slideUp("slow");
-            localStorage.removeItem(key);
-            console.log(localStorage);    
-        });
-    };
+    $('#backhome').click(function() {
+        stop();
+    }); 
 
-
-    // to be executed on page load
-    $(function() {
-        // check if a draft exists
-        localStorage.removeItem("");
-
-        if (localStorage.length == 0){
-            // it does not exist
-            console.log("there's nothing in the localStorage");
-            $('#wrapper_draft').hide();
-            return
-        } 
-
-        if (localStorage.length == 1 && localStorage.getItem(localStorage.key(0)) === "") {
-            // it does not exist
-            console.log("there's nothing in the localStorage");
-            $('#wrapper_draft').hide();
-            return
-        }
-
-        else {
-            // a draft does exist
-            $('#wrapper_form').hide();
-            $('#wrapper_draft').show();
-            console.log(localStorage);
-            $('#alert1').show();
-            getDrafts();
-        }    
+    $(".side-right > .intro-content").click(function() {
+        $('#content').show();    
     });
+
+    $(".side-left > .intro-content").click(function() {
+        $('#content').hide();   
+    });   
 </script>
 
 {% endblock %}

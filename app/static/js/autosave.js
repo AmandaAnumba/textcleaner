@@ -6,127 +6,193 @@ var timer;
 
 function submitthis() {
 	var text = $('#textarea').html();
-    // console.log(text);
     $('#box').val(text);
 }
 
 function clear() {
-	$('#textarea').empty();
     $('.froala-element').empty();
+    console.log("cleared");
 }
 
 // for the save modal
 function savethis() {
-	var name = $('#name').val().replace(/[^\w\s\/]/gi, '').replace(/\//g, "-");
-    console.log(name);
-    $('#draftname').empty().html(name);
-    saveDraft(name);
+	var draft = $('#name').val().replace(/[^\w\s\/]/gi, '').replace(/\//g, "-");
+    var user = $('#username').val();
+    saveDraft(draft, user);
+    $('#draftname').empty().html(draft);
     $('#saveModal').modal('hide');
     $('#save').hide();
-    $('#save2').show();
+    $('#save2, #delete, #comment').show();
+    getDrafts2();
 }
 
 // for the delete modal
-function deletethis() {
+function b4delete() {
     var name = $('#draftname').text();
-    console.log("deleted");
-    localStorage.removeItem(name);
-    console.log(localStorage);
+    deletethis(name);
+}
+function deletethis(name) {
     $('#textarea').empty();
     $('.froala-element').empty();
+    var draft = Parse.Object.extend("drafts");
+    var query = new Parse.Query(draft);
+    query.equalTo("draftname", name);
+    query.first({
+        success: function(result) {
+            result.destroy({});
+            console.log("deleted");
+        },
+        error: function(myObject, error) {
+            console.log("Save failed with error: ", error);
+        }
+    });
     $('#deleteModal').modal('hide');
     stop();
+    getDrafts2();
 }
 
-window.onload=function(){
-	getDrafts2();
-    $('.links>ul>li>a').click(function() {
-        var key = $( this ).attr("draftname");
-        console.log(key);
-        window.location = "/edits/"+key;   
-    });
-};
+// for the comments modal
+function add_comment() {
+    
+}
 
-function saveDraft(name) {
-	var editted = $('.froala-element').html();
-	var orig = $('#textarea').html();
-	var timestamp = new Date().getTime();
-	var content = [orig, editted, timestamp];
-
-	var time = showTime();
-	console.log(time);
-	var msg = 'Draft Autosaved at ' + time;
-	$('#message').empty().html(msg);
-	$('#message').show();
+function saveDraft(name, user) {
+    // get the content to save
+	var orig = $('#textarea').html(),
+        editted = $('.froala-element').html(),
+        timestamp = new Date().getTime(),
+        content = [orig, editted, timestamp],
+        time = showTime(),
+        msg = 'Draft saved at ' + time;
+	$('#message').empty().html(msg).show();
 	setTimeout( "jQuery('#message').hide();", 7000 );
 
 	// store the content
-	localStorage.setItem(name, JSON.stringify(content));
+    var draft = Parse.Object.extend("drafts");
+    var x = new draft();
+    x.save({
+        content: JSON.stringify(content),
+        draftname: name,
+        name: user
+    }, {
+        success: function(x) {
+            console.log("Save succeeded");
+        },
+        error: function(model, error) {
+            console.log("Save failed with error: ", error);
+        }
+    });
 
-	// save every 60 secs by calling the function
-	timer = window.setInterval(autosave, 60000);	
+	// save every 60 secs by executing the function
+    if (!timer) {
+        timer = window.setInterval(function() {
+            var name = $('#draftname').text(),
+                orig = $('#textarea').html(),
+                edit = $('.froala-element').html(),
+                timestamp = new Date().getTime(), 
+                content = [orig, edit, timestamp],
+                time = showTime(),
+                msg = 'Draft saved at ' + time;
+            $('#message').empty().html(msg).show();
+            setTimeout( "jQuery('#message').hide();", 7000 );
+            
+            x.save(null, {
+                success: function(x) {
+                    x.set("content", JSON.stringify(content));
+                    x.save();
+                }, 
+                error: function(model, error) {
+                    console.log("autosave failed with error: ", error);
+                }
+            });
+        }, 60000);
+    }
+    else { return } 
 }
 
 
-function autosave() {
-	var name = $('#draftname').text();
-	var edit = $('.froala-element').html();
-	var orig = $('#textarea').html();
-	var timestamp = new Date().getTime();
-	var content = [orig, edit, timestamp];
-
-	var time = showTime();
-	var msg = 'Draft Saved at ' + time;
-	$('#message').empty().html(msg);
-	$('#message').show();
+function selfsave() {
+	var name = $('#draftname').text(),
+        edit = $('.froala-element').html(),
+        orig = $('#textarea').html(),
+        timestamp = new Date().getTime(),
+        content = [orig, edit, timestamp],
+        time = showTime(),
+        msg = 'Draft Saved at ' + time;
+	$('#message').empty().html(msg).show();
 	setTimeout( "jQuery('#message').hide();", 7000 );
-	localStorage.setItem(name, JSON.stringify(content));
-	if (timer === 'undefined') {
-		timer = window.setInterval(autosave, 60000);
-	}
-	else {
-		return
-	}
+    
+    var draft = Parse.Object.extend("drafts");
+    var query = new Parse.Query(draft);
+    query.equalTo("draftname", name);
+    query.first({
+        success: function(result) {
+            result.set("content", JSON.stringify(content));
+            result.save();
+        },
+        error: function(myObject, error) {
+            console.log("Save failed with error: ", error);
+        }
+    });
 }
 
 
 function getDrafts() {
-	console.log('Getting Draft...');
-	localStorage.removeItem("");
-	var len = localStorage.length; 
-
-	if (len >= 6) {
-		$('.table').popover('show');
-	}
-
-	for (var i = 0; i < len; ++i) {
-		var name = localStorage.key(i);
-		var count = i+1;
-		var retrieved = localStorage.getItem(name);
-		var content = JSON.parse(retrieved);
-		var date = new Date(content[2]);
-		var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button></td>';
-		var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button></td>';
-		var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td>'+btn1+btn2+'</tr>';
-		$('.table').append(html);
-	}	
+	console.log('getting drafts for draft table ...'); 
+    $('.table > tbody > th').empty();
+    var query = new Parse.Query('drafts');
+    query.ascending("updatedAt");
+    query.find({
+        success: function(results) {
+            for (var i = 0; i < results.length; i++) {
+                var name = results[i].get('draftname');
+                var retrieved = results[i].get('content');
+                var user = results[i].get('name');
+                var content = JSON.parse(retrieved);
+                var date = new Date(content[2]);
+                var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button></td>';
+                var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button></td>';
+                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td class="space">'+user+'</td>'+btn1+btn2+'</tr>';
+                $('.table').append(html);
+            }
+        },
+        error: function(error) {
+            console.log('error')
+        }
+    });
 }
+
 
 function getDrafts2() {
-	console.log('Getting Draft...');
-	localStorage.removeItem("");
+	console.log('getting drafts for panel ...');
 	$('.links>ul').empty();
-
-	for (var i = 0, len = localStorage.length; i < len; ++i) {
-		var name = localStorage.key(i);
-		var count = i+1;
-		var retrieved = localStorage.getItem(name);
-		var content = JSON.parse(retrieved);
-		var date = new Date(content[2]);
-		var html = '<li><a href="#" draftname="'+name+'">'+name+'<p>'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</p></a></li>';
-		$('.links>ul').append(html);
-	}	
+    var query = new Parse.Query('drafts');
+    query.ascending("updatedAt");
+    query.find({
+        success: function(results) {
+            if (results.length == 0) {
+                var html = '<p style="color:#40A1D3;"><small>There aren\'t any available drafts.</small></p>';
+                $('.links>ul').append(html);
+            }
+            
+            else {
+                for (var i = 0; i < results.length; i++) {
+                    var name = results[i].get('draftname'),
+                        author = results[i].get('name'),
+                        retrieved = results[i].get('content'),
+                        content = JSON.parse(retrieved),
+                        date = new Date(content[2]);
+                    var html = '<li><a href="#" draftname="'+name+'" class="draft_link">'+name+'<p>Author: '+ author +'</p><p>'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</p></a></li>';
+                    $('.links>ul').append(html);
+                }
+            }
+        },
+        error: function(error) {
+            console.log('error')
+        }
+    });	
 }
+
 
 function showTime() {
 	var timeNow = new Date();
@@ -168,62 +234,3 @@ Date.prototype.customFormat = function(formatString){
     return formatString.replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 }
 
-
-
-
-// old stuff
-// $(".froala-element").children().each(function() {
-        //     $( this ).append( "<br><br>" );
-        // });
-        // $('#edit').editable({inlineMode: false, inverseSkin: true});
-        // if (localStorage.length == 0) {
-        //     console.log("nothing in storage so loading the content");
-        //     load();
-        // }
-
-        // else {
-        //     console.log("checking the strings");
-        //     var key = localStorage.key(0);
-        //     var retrieved = localStorage.getItem(key);
-        //     var content = JSON.parse(retrieved);
-        //     var orig = content[0]; // in html format
-        //     var out = content[1];
-        //     var timestamp = content[2];
-        //     var original = $('#textarea').text();
-        //     var output = $('#output').text();
-
-        //     $('#box').append(orig);
-        //     var newOrig = $('#box').text();
-        //     $('#box').append(orig);
-        //     var newOrig = $('#box').text();
-
-
-        //     if (newOrig == )
-        //     $('#textarea').append(original);
-
-            
-        //     // console.log(output);
-        //     $('#output').empty();
-        //     $('#output').append(output);
-        //     $('#save2').hide();
-
-        //     var now = new Date();
-            
-        //     console.log("now: "+now.getTime());
-        //     console.log("timestamp: "+timestamp);
-
-        //     if (now.getTime() > timestamp) {
-        //         // if the current time is newer than the time of 
-        //         console.log('adding saved content');
-        //         load();
-        //     }
-
-        //     else {
-        //         console.log('getting saved content');
-        //         $('#save').hide();
-        //         $('#output').append(content[1]);
-        //         $('#textarea').append(content[0]);
-        //         $('#draftname').html(key);
-        //     }
-            
-        // }

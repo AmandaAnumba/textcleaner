@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- SIDEBAR PANEL -->
+<div class="snap-drawers">
+    <div class="snap-drawer snap-drawer-right">
+        <div>
+            <div class="nav_header">Drafts Drawer</div>
+            <div class="nav_sub">quick access to your other saved drafts</div>
+            <div class="links"><ul></ul></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- CONTENT -->
+<div id="content" class="snap-content">
+    
+    <!-- FOR SIDEBAR -->
+    <div id="nav">
+        <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
+        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">Text Cleaner</div>
+    <div class="sub-header">for use with Constant Contact weekly emails</div>
+    
+    <!-- HIDDEN -->
+    <p id="draftname">{{key}}</p>
+
+    <!-- TEXT AREAS -->
+    <div id="wrapper_form">
+        
+        <!-- INPUT -->
+        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+            
+            <div id='textarea' contenteditable></div>
+            
+            <input type='hidden' id='box' name='text' />
+
+            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->    
+
+            <!-- BUTTONS -->
+            <div class="button">
+                <!-- <button type="button" class="btn btn-default" id="clear" onclick="clear();">Clear</button> -->
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
+            </div>   
+        </form>
+
+        <!-- OUTPUT -->
+        <section id="editor" class="editor">
+            <div id='edit'></div>
+        </section>
+        
+        <div id="btn_group2">
+            <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+            <button type="button" class="btn btn-default" id="save2" onclick="autosave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
+        </div>
+
+        <p id="message"></p>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4>Enter a name to save the draft</h4>
+                <input type="text" id="name" class="form-control" placeholder="examples: weekly7/12, draft1, v1">
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+                <button type="button" class="btn btn-primary" id="savethis" onclick="savethis();">Save it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                <h4>Are you sure you want to delete this draft? Here's what you're deleting:</h4>
+                <ul style="text-align:left;">
+                    <li><small>this current draft that's saved in your cache</small></li>
+                    <li><small>everything in the textboxes</small></li>
+                    <li><small>all traces of this draft's existence</small></li>
+                </ul>
+                <div>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="deletethis();">Yeah, do it</button>
+                    <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    
+    $( "#full" ).click(function() {
+        $('#editor').toggleClass('editor full');
+        $(this).toggleClass('active btn-primary');
+        $("#full>span").toggleClass('glyphicon-resize-full glyphicon-resize-small');
+        $("form").toggle();
+        $('#btn_group2, #message').toggleClass('shift');
+        $('.froala-element').toggleClass('big');
+    });
+
+    // on window load
+    $(function() {
+        $("button, #menu, #home").tooltip();
+        $('#edit').editable({inlineMode: false, inverseSkin: true});
+        var key = $('#draftname').text();
+        var retrieved = localStorage.getItem(key);
+        var content = JSON.parse(retrieved);
+        $('#save').hide();
+        $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
+        $('#textarea').append(content[0]);
+    });
+
+    // =================  SIDEBAR  =================
+        var snapper = new Snap({
+            element: document.getElementById('content'),
+            disable: 'left',
+            touchToDrag: false
+        });
+
+        /*  create cross-browser event handler. */
+        var addEvent = function addEvent(element, eventName, func) {
+          if (element.addEventListener) {
+              return element.addEventListener(eventName, func, false);
+          } else if (element.attachEvent) {
+              return element.attachEvent("on" + eventName, func);
+          }
+        };
+
+        /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
+        addEvent(document.getElementById('menu'), 'click', function() {
+          snapper.open('right');
+        });
+
+        var menu = document.getElementById('menu');
+
+        menu.addEventListener('click', function(){
+          if( snapper.state().state=="right" ){
+              snapper.close();
+          } else {
+              snapper.open('right');
+          }
+
+        });
+
+</script>
+{% endblock %}
