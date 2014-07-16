@@ -152,7 +152,7 @@ function getDrafts() {
                 var date = new Date(content[2]);
                 var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button></td>';
                 var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button></td>';
-                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td class="space">'+user+'</td>'+btn1+btn2+'</tr>';
+                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td>'+user+'</td>'+btn1+btn2+'</tr>';
                 $('.table').append(html);
             }
         },
