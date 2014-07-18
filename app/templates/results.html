@@ -179,9 +179,14 @@
         // clean the extra spaces
         var elements = document.getElementsByClassName('froala-element')[0].childNodes;
         for (var i = 0; i<elements.length; i++) {
-            while (elements[i].lastChild.nodeName == "BR") {
-                elements[i].removeChild(elements[i].lastChild);
-            }  
+            if (elements[i].nodeName != "P") {
+                return
+            }
+            else {
+                while (elements[i].lastChild.nodeName == "BR") {
+                    elements[i].removeChild(elements[i].lastChild);
+                } 
+            }
         }
     }, 1000);
 

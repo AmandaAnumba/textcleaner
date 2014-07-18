@@ -29,6 +29,7 @@
                         </span>
                     </div>
                     <h1><span>Continue </span><span>edit a draft or click to format new text</span></h1>
+                    <p id="count" style="color:black;"><small></small></p>
                 </div>
                 <div class="overlay"></div>
             </div>
@@ -105,7 +106,15 @@
                     <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
                 </div>
 
+                <div id="draft_status2">
+                    <label>Draft Status:  </label>
+                    <label class="radio-inline"><input type="radio" name="options" id="open" value="Open">Open</label>
+                    <label class="radio-inline"><input type="radio" name="options" id="closed" value="Closed">Closed</label>
+                    <label class="radio-inline"><input type="radio" name="options" id="finished" value="Completed">Completed</label>
+                </div>
+
                 <p id="message" style="float:left; margin-left:14%;"></p>
+
                 <p id="draftname"></p>
             </div>
         </div>
@@ -200,10 +209,11 @@
     $(function() {
         $('#edit2').editable({inlineMode: false, inverseSkin: true});
         $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
-        $('#save2, #delete, #comment, #draft_status').hide();
+        $('#save2, #delete, #comment, #draft_status2').hide();
         var query = new Parse.Query('drafts');
         query.find({
             success: function(results) {
+                $('#count>small').empty().append(results.length + ' draft(s) available');
                 if (results.length == 0) {
                     console.log("there's nothing in the database");
                     $('#wrapper_draft, #alert1').hide();
