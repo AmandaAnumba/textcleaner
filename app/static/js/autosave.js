@@ -18,13 +18,35 @@ function clear() {
 function savethis() {
 	var draft = $('#name').val().replace(/[^\w\s\/]/gi, '').replace(/\//g, "-");
     var user = $('#username').val();
-    saveDraft(draft, user);
+    var status = $('input[name=draft_options]').val();
+    console.log(status);
+    saveDraft(draft, user, status);
     $('#draftname').empty().html(draft);
     $('#saveModal').modal('hide');
     $('#save').hide();
-    $('#save2, #delete, #comment').show();
+    $('#save2, #delete, #comment, #draft_status').show();
+    $('input[name=options]').val([status]);
     getDrafts2();
 }
+// $('input[name="options"]').change( function() {
+//     var name = $('#draftname').text(),
+//         status = $(this).val();
+
+//     var draft = Parse.Object.extend("drafts");
+//     var query = new Parse.Query(draft);
+//     query.equalTo("draftname", name);
+//     query.first({
+//         success: function(result) {
+//             result.set("status", status);
+//             result.save();
+//             console.log("status changed and saved");
+//         },
+//         error: function(myObject, error) {
+//             console.log("Save failed with error: ", error);
+//         }
+//     });
+// });
+
 
 // for the delete modal
 function b4delete() {
@@ -56,7 +78,7 @@ function add_comment() {
     
 }
 
-function saveDraft(name, user) {
+function saveDraft(name, user, status) {
     // get the content to save
 	var orig = $('#textarea').html(),
         editted = $('.froala-element').html(),
@@ -73,7 +95,8 @@ function saveDraft(name, user) {
     x.save({
         content: JSON.stringify(content),
         draftname: name,
-        name: user
+        name: user,
+        status: status
     }, {
         success: function(x) {
             console.log("Save succeeded");
@@ -115,6 +138,7 @@ function selfsave() {
 	var name = $('#draftname').text(),
         edit = $('.froala-element').html(),
         orig = $('#textarea').html(),
+        status = $('input[name=options]').val(),
         timestamp = new Date().getTime(),
         content = [orig, edit, timestamp],
         time = showTime(),
@@ -128,6 +152,7 @@ function selfsave() {
     query.first({
         success: function(result) {
             result.set("content", JSON.stringify(content));
+            result.set("status", status);
             result.save();
         },
         error: function(myObject, error) {
@@ -145,15 +170,19 @@ function getDrafts() {
     query.find({
         success: function(results) {
             for (var i = 0; i < results.length; i++) {
-                var name = results[i].get('draftname');
-                var retrieved = results[i].get('content');
-                var user = results[i].get('name');
-                var content = JSON.parse(retrieved);
-                var date = new Date(content[2]);
-                var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button></td>';
-                var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button></td>';
-                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td>'+user+'</td>'+btn1+btn2+'</tr>';
+                var name = results[i].get('draftname'),
+                    retrieved = results[i].get('content'),
+                    user = results[i].get('name'),
+                    status = results[i].get('status'),
+                    content = JSON.parse(retrieved),
+                    date = new Date(content[2]);
+                var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="edit this draft"><span class="glyphicon glyphicon-pencil"></span></button></td>';
+                var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button></td>';
+                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td>'+user+'</td><td>'+status+'</td>'+btn1+btn2+'</tr>';
                 $('.table').append(html);
+                if (status == "Open") {
+                    $('tr').tooltip({title:'someone is currently editing this draft', placement: 'right'});
+                }
             }
         },
         error: function(error) {

@@ -6,7 +6,7 @@
     <div class="snap-drawer snap-drawer-right">
         <div>
             <div class="nav_header">Drafts Drawer</div>
-            <div class="nav_sub">quick access to your other saved drafts</div>
+            <div class="nav_sub">quick access to the other saved drafts</div>
             <div class="links"><ul></ul></div>
         </div>
     </div>
@@ -16,10 +16,10 @@
 <!-- CONTENT -->
 <div id="content" class="snap-content">
     
-    <!-- FOR SIDEBAR -->
+    <!-- NAVBAR -->
     <div id="nav">
         <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
-        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
     </div>
 
     <!-- HEADER -->
@@ -41,7 +41,7 @@
 
             <!-- BUTTONS -->
             <div class="button">
-                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Format</button>
             </div>   
         </form>
 
@@ -59,6 +59,12 @@
                 <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
                 <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
             </div>
+            <div id="draft_status">
+                <label>Draft Status:  </label>
+                <label class="radio-inline"><input type="radio" name="options" id="open" value="Open">Open</label>
+                <label class="radio-inline"><input type="radio" name="options" id="closed" value="Closed">Closed</label>
+                <label class="radio-inline"><input type="radio" name="options" id="finished" value="Completed">Completed</label>
+            </div>
 
             <p id="message"></p>
         </div>
@@ -74,17 +80,32 @@
                 <div class="form-group">
                     <label for="name4draft">Name this draft</label>
                     <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
-                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-"</small></p>
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-" or underscores "_"</small></p>
                 </div>
                 <div class="form-group">
-                    <label for="username">Your Name</label>
+                    <label for="username">Your name</label>
                     <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Draft Status</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Open" value="Open"> Open
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Closed" value="Closed"> Closed
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Completed" value="Completed"> Completed
+                        </label>
+                        <p class="help-block" id="radio_help"><small></small></p>
+                    </div>
                 </div>
             </div>
                 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
                 <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>     
             </div>
         </div>
     </div>
@@ -136,21 +157,31 @@
         $('#textarea').empty().append(original);
         $('.froala-element').empty().removeClass('f-placeholder').append(output);
         $('.froala-element').css({"max-height": "270px"});
-        $('#save2, #delete, #comment').hide(); 
+        $(".froala-element").children().each(function() {
+            $( this ).removeAttr( "class" );
+            $( this ).removeAttr( "style" );
+        });
+        $('#save2, #delete, #comment, #draft_status').hide(); 
         getDrafts2();
     });
 
-    setTimeout(function() {
+    setTimeout(function() { 
         var list = document.getElementsByClassName("draft_link");
-
         var li_click = function() {
             var key = this.getAttribute("draftname");
             console.log(key);
             window.location = "/edits/"+key; 
         };
-
         for (var i = 0; i < list.length; i++){
             list[i].addEventListener('click', li_click, false);
+        }
+
+        // clean the extra spaces
+        var elements = document.getElementsByClassName('froala-element')[0].childNodes;
+        for (var i = 0; i<elements.length; i++) {
+            while (elements[i].lastChild.nodeName == "BR") {
+                elements[i].removeChild(elements[i].lastChild);
+            }  
         }
     }, 1000);
 
@@ -163,7 +194,18 @@
         $('.froala-element, .froala-element>textarea').toggleClass('big');
     });
 
-    
+    $( "input:radio[name=draft_options]" ).mouseenter(function() {
+        var val = $(this).val();
+        if (val=="Open") {
+            $("#radio_help>small").empty().append("Select 'Open' if you're still editing the draft. (Don't forget to select 'Closed' when you're done editing so others know you're done and they can edit it)");
+        }
+        if (val=="Closed") {
+            $("#radio_help>small").empty().append("Select 'Closed' if you're done editing the draft, but it isn't completed. This will let others know that they can edit the draft now.");
+        }
+        if (val=="Completed") {
+            $("#radio_help>small").empty().append("Select 'Completed' if the draft is ready to be sent out.");
+        }
+    });
 
     // =================  SIDEBAR  =================
         var snapper = new Snap({

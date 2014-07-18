@@ -15,7 +15,10 @@ def clean(text):
 		link['style'] = 'color: rgb(64, 161, 211); font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4; text-decoration: none !important; font-weight: bold;'
 
 	for words in soup.find_all('span'):
-		words['style'] = 'color: #535353; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4;'
+		if words['style'] == 'font-weight: 700;':
+			words['style'] = 'color: #535353; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4; font-weight: 700;'
+		else:
+			words['style'] = 'color: #535353; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4;'
 
 	for bold in soup.find_all('b'):
 		bold['style'] = 'color: #535353; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.4;'

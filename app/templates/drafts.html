@@ -41,7 +41,7 @@
 
             <!-- BUTTONS -->
             <div class="button">
-                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Format</button>
             </div>   
         </form>
 
@@ -60,6 +60,13 @@
                 <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
             </div>
 
+            <div id="draft_status">
+                <label>Draft Status:  </label>
+                <label class="radio-inline"><input type="radio" name="options" id="open" value="Open">Open</label>
+                <label class="radio-inline"><input type="radio" name="options" id="closed" value="Closed">Closed</label>
+                <label class="radio-inline"><input type="radio" name="options" id="finished" value="Completed">Completed</label>
+            </div>
+
             <p id="message"></p>
         </div>
     </div>
@@ -74,17 +81,32 @@
                 <div class="form-group">
                     <label for="name4draft">Name this draft</label>
                     <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
-                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-"</small></p>
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-" or underscores "_"</small></p>
                 </div>
                 <div class="form-group">
-                    <label for="username">Your Name</label>
+                    <label for="username">Your name</label>
                     <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Draft Status</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Open" value="Open"> Open
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Closed" value="Closed"> Closed
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Completed" value="Completed"> Completed
+                        </label>
+                        <p class="help-block" id="radio_help"><small></small></p>
+                    </div>
                 </div>
             </div>
                 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
                 <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>     
             </div>
         </div>
     </div>
@@ -141,20 +163,55 @@
         query.equalTo("draftname", key);
         query.first({
             success: function(results) {
-                var name = results.get('draftname');
-                var retrieved = results.get('content');
-                var user = results.get('name');
-                var content = JSON.parse(retrieved);
+                var name = results.get('draftname'),
+                    retrieved = results.get('content'),
+                    user = results.get('name'),
+                    status = results.get('status'),
+                    content = JSON.parse(retrieved);
+                $('input[name=options]').val([status]);
                 $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
-                $('.froala-element').css({"max-height": "270px"});
-                $('#textarea').append(content[0]);
+                if (content[0] == "") {
+                    // $('#textarea').css({"height": "350px"});
+                    $('form').hide();
+                    $('.label_t').css({"text-align": "center", "margin-right":"0"});
+                    $('#editor').removeClass("editor").addClass("single");
+                    $('#btn_group2, #draft_status, #message').css("margin-right", "20%");
+                    $('.froala-element').css({"height": "300px"});
+                    $('#edit').css({'resize': 'vertical'});
+
+                }
+                else {
+                    $('#textarea').append(content[0]);
+                    $('.froala-element').css({"max-height": "270px"});
+                }
+                
+                
             },
             error: function(myObject, error) {
                 console.log("Save failed with error: ", error);
             }
         }); 
     });
-
+    
+    $('input[name="options"]').change( function() {
+        var name = $('#draftname').text(),
+            status = $(this).val();
+        console.log(status);
+        var draft = Parse.Object.extend("drafts");
+        var query = new Parse.Query(draft);
+        query.equalTo("draftname", name);
+        query.first({
+            success: function(result) {
+                result.set("status", status);
+                result.save();
+                console.log("status changed and saved");
+            },
+            error: function(myObject, error) {
+                console.log("Save failed with error: ", error);
+            }
+        });
+    });
+    
     setTimeout(function() {
         var list = document.getElementsByClassName("draft_link");
 

@@ -22,6 +22,20 @@
     //  $('.links>ul').append(html);
     // }  
 
+    // if ($('.froala-element > p').children().last().prop("tagName") == "BR") {
+            //     $('.froala-element > p').children().last().remove();
+            //     breaks();
+            // }
+
+    // function breaks() {
+    //     $('.froala-element').children().each(function(i) {
+    //         if ($(this).last().prop("tagName") == "BR") {
+    //             $(this).last().remove();
+    //             breaks();
+    //         }
+    //     });
+    // } 
+    
 // var query = new Parse.Query('drafts');
         // query.find({
         //     success: function(results) {

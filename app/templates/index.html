@@ -58,7 +58,7 @@
 
                             <!-- BUTTONS -->
                             <div class="button">
-                                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submit">Format</button>
                             </div>   
                         </form>
 
@@ -76,6 +76,7 @@
                                 <th>Draft Name</th>
                                 <th>Last Saved</th>
                                 <th>Author</th>
+                                <th>Status</th>
                             </tr>
                         </table>
 
@@ -126,17 +127,32 @@
                 <div class="form-group">
                     <label for="name4draft">Name this draft</label>
                     <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
-                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-"</small></p>
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-" or underscores "_"</small></p>
                 </div>
                 <div class="form-group">
-                    <label for="username">Your Name</label>
+                    <label for="username">Your name</label>
                     <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label>Draft Status</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Open" value="Open"> Open
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Closed" value="Closed"> Closed
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="draft_options" id="Completed" value="Completed"> Completed
+                        </label>
+                        <p class="help-block" id="radio_help"><small></small></p>
+                    </div>
                 </div>
             </div>
                 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
                 <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>     
             </div>
         </div>
     </div>
@@ -182,10 +198,9 @@
 <script type="text/javascript">
     // to be executed as page loads
     $(function() {
-        $("button").tooltip();
         $('#edit2').editable({inlineMode: false, inverseSkin: true});
         $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
-        $('#save2, #delete, #comment').hide(); 
+        $('#save2, #delete, #comment, #draft_status').hide();
         var query = new Parse.Query('drafts');
         query.find({
             success: function(results) {
@@ -205,6 +220,7 @@
                 console.log('error')
             }
         });
+        $("button").tooltip();
     });
 
     setTimeout(function() {
@@ -260,6 +276,19 @@
 
     $(".side-left > .intro-content").click(function() {
         $('#content').hide();   
+    });
+
+    $( "input:radio[name=draft_options]" ).mouseenter(function() {
+        var val = $(this).val();
+        if (val=="Open") {
+            $("#radio_help>small").empty().append("Select 'Open' if you're still editing the draft. (Don't forget to select 'Closed' when you're done editing so others know you're done and they can edit it)");
+        }
+        if (val=="Closed") {
+            $("#radio_help>small").empty().append("Select 'Closed' if you're done editing the draft, but it isn't completed. This will let others know that they can edit the draft now.");
+        }
+        if (val=="Completed") {
+            $("#radio_help>small").empty().append("Select 'Completed' if the draft is ready to be sent out.");
+        }
     });   
 </script>
 
