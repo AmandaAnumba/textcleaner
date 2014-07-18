@@ -174,10 +174,14 @@
 		text-transform: uppercase;
 	}
 
-	.sprite.Open > img, .sprite.Closed > img {
+	.sprite.Closed > img {
 		padding-left: 0.6em;
 	}
 
+	.sprite.Open > img {
+		padding-left: 1.1em;
+	}
+	
 	.sprite.Completed {
 		position: relative;
 	}
