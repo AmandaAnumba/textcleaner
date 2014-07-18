@@ -181,10 +181,10 @@ function getDrafts() {
                 $('.table').append(html);
                 if (status == "Open") {
                     $('tr').tooltip({title:'someone is currently editing this draft', placement: 'right'});
-                    $('.Open').append("<img src='../static/images/red.png' />");
+                    $('.Open').empty().append("<img src='../static/images/red.png' />");
                 }
                 if (status == "Closed") {
-                    $('.Closed').append("<img src='../static/images/green.png' />");
+                    $('.Closed').empty().append("<img src='../static/images/green.png' />");
                 }
             }
         },

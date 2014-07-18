@@ -175,7 +175,7 @@
 	}
 
 	.sprite.Open > img, .sprite.Closed > img {
-		padding-left: 0.4em;
+		padding-left: 0.6em;
 	}
 
 	.sprite.Completed {
@@ -189,7 +189,7 @@
 	    text-decoration: inherit;
 	    color: #000;
 	    font-size: 13px;
-	    padding-left: 1.3em;
+	    padding-left: 1.5em;
 	}
 
 
