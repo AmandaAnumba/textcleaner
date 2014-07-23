@@ -21,6 +21,11 @@ def drafts(name):
     return render_template('drafts.html',
                             key = key)
 
+@app.route('/new/<name>')
+def blank(name):
+    key = name
+    return render_template('blank.html',
+                            key = key)
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():

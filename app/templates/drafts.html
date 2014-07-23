@@ -57,14 +57,6 @@
                 <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
                 <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
                 <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
-                <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
-            </div>
-
-            <div id="draft_status">
-                <label>Draft Status:  </label>
-                <label class="radio-inline"><input type="radio" name="options" id="open" value="Open">Open</label>
-                <label class="radio-inline"><input type="radio" name="options" id="closed" value="Closed">Closed</label>
-                <label class="radio-inline"><input type="radio" name="options" id="finished" value="Completed">Completed</label>
             </div>
 
             <p id="message"></p>
@@ -86,21 +78,6 @@
                 <div class="form-group">
                     <label for="username">Your name</label>
                     <input type="text" class="form-control" id="username" placeholder="Name">
-                </div>
-                <div class="form-group">
-                    <label>Draft Status</label>
-                    <div>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Open" value="Open"> Open
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Closed" value="Closed"> Closed
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Completed" value="Completed"> Completed
-                        </label>
-                        <p class="help-block" id="radio_help"><small></small></p>
-                    </div>
                 </div>
             </div>
                 
@@ -131,23 +108,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body" style="text-align:center;">
-                <div class="form-group">
-                    <h4>Add a comment to this draft for others to see</h4>
-                    <textarea class="form-control" rows="3" style="resize:vertical;"></textarea>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary" id="yesadd" onclick="add_comment();">Add Comment</button>
-                    <button type="button" class="btn btn-default" id="dontadd" data-dismiss="modal">Nevermind</button>   
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script type="text/javascript">
     // on window load
@@ -166,13 +126,11 @@
                 var name = results.get('draftname'),
                     retrieved = results.get('content'),
                     user = results.get('name'),
-                    status = results.get('status'),
                     content = JSON.parse(retrieved);
-                $('input[name=options]').val([status]);
                 $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
                 if (content[0] == "") {
                     // $('#textarea').css({"height": "350px"});
-                    $('form').hide();
+                    $('form, #full').hide();
                     $('.label_t').css({"text-align": "center", "margin-right":"0"});
                     $('#editor').removeClass("editor").addClass("single");
                     $('#btn_group2, #draft_status, #message').css("margin-right", "20%");

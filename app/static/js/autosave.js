@@ -5,7 +5,7 @@
 var timer;
 
 function submitthis() {
-	var text = $('#textarea').html();
+	var text = $('#textarea').html().replace(/(\r\n|\n|\r)/gm," ").replace( /[\s\n\r]+/g, ' ' );
     $('#box').val(text);
 }
 
@@ -18,34 +18,13 @@ function clear() {
 function savethis() {
 	var draft = $('#name').val().replace(/[^\w\s\/]/gi, '').replace(/\//g, "-");
     var user = $('#username').val();
-    var status = $('input[name=draft_options]:checked').val();
-    console.log(status);
-    saveDraft(draft, user, status);
+    saveDraft(draft, user);
     $('#draftname').empty().html(draft);
     $('#saveModal').modal('hide');
     $('#save').hide();
-    $('#save2, #delete, #comment, #draft_status, #draft_status2').show();
-    $('input[name=options]').val([status]);
+    $('#save2, #delete, #comment').show();
     getDrafts2();
 }
-$('input[name="options"]').change( function() {
-    var name = $('#draftname').text(),
-        status = $('input[name=options]:checked').val();
-    console.log(status);
-    var draft = Parse.Object.extend("drafts");
-    var query = new Parse.Query(draft);
-    query.equalTo("draftname", name);
-    query.first({
-        success: function(result) {
-            result.set("status", status);
-            result.save();
-            console.log("status changed and saved");
-        },
-        error: function(myObject, error) {
-            console.log("Save failed with error: ", error);
-        }
-    });
-});
 
 // for the delete modal
 function b4delete() {
@@ -70,14 +49,10 @@ function deletethis(name) {
     $('#deleteModal').modal('hide');
     stop();
     getDrafts2();
+    // window.location.replace('../');
 }
 
-// for the comments modal
-function add_comment() {
-    
-}
-
-function saveDraft(name, user, status) {
+function saveDraft(name, user) {
     // get the content to save
 	var orig = $('#textarea').html(),
         editted = $('.froala-element').html(),
@@ -94,8 +69,7 @@ function saveDraft(name, user, status) {
     x.save({
         content: JSON.stringify(content),
         draftname: name,
-        name: user,
-        status: status
+        name: user
     }, {
         success: function(x) {
             console.log("Save succeeded");
@@ -137,7 +111,6 @@ function selfsave() {
 	var name = $('#draftname').text(),
         edit = $('.froala-element').html(),
         orig = $('#textarea').html(),
-        status = $('input[name=options]:checked').val(),
         timestamp = new Date().getTime(),
         content = [orig, edit, timestamp],
         time = showTime(),
@@ -151,7 +124,6 @@ function selfsave() {
     query.first({
         success: function(result) {
             result.set("content", JSON.stringify(content));
-            result.set("status", status);
             result.save();
         },
         error: function(myObject, error) {
@@ -172,20 +144,13 @@ function getDrafts() {
                 var name = results[i].get('draftname'),
                     retrieved = results[i].get('content'),
                     user = results[i].get('name'),
-                    status = results[i].get('status'),
                     content = JSON.parse(retrieved),
                     date = new Date(content[2]);
                 var btn1 = '<td class="btn1" draftname="'+name+'"><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="edit this draft"><span class="glyphicon glyphicon-pencil"></span></button></td>';
                 var btn2 = '<td class="btn2" draftname="'+name+'"><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button></td>';
-                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td>'+user+'</td><td class="sprite '+status+'"></td>'+btn1+btn2+'</tr>';
+                var btn3 = '<td class="btn3" draftname="'+name+'"><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="duplicate this draft"><i class="fa fa-files-o"></i></button></td>';
+                var html = '<tr><td class="active space">'+name+'</td><td class="space">'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</td><td>'+user+'</td>'+btn1+btn2+btn3+'</tr>';
                 $('.table').append(html);
-                if (status == "Open") {
-                    $('tr').tooltip({title:'someone is currently editing this draft', placement: 'right'});
-                    $('.Open').empty().append("<img src='../static/images/red.png' />");
-                }
-                if (status == "Closed") {
-                    $('.Closed').empty().append("<img src='../static/images/green.png' />");
-                }
             }
         },
         error: function(error) {
@@ -214,7 +179,7 @@ function getDrafts2() {
                         retrieved = results[i].get('content'),
                         content = JSON.parse(retrieved),
                         date = new Date(content[2]);
-                    var html = '<li><a href="#" draftname="'+name+'" class="draft_link">'+name+'<p>Author: '+ author +'</p><p>'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</p></a></li>';
+                    var html = '<li><a href="#" draftname="'+name+'" class="draft_link">'+name+'<p>'+date.customFormat( "#DDD#, #MMMM# #D#, #YYYY# #h#:#mm# #ampm#" )+'</p></a></li>';
                     $('.links>ul').append(html);
                 }
             }

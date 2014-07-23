@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- SIDEBAR PANEL -->
+<div class="snap-drawers" id="this_snap">
+    <div class="snap-drawer snap-drawer-left">
+        <div>
+            <div class="nav_header">Drafts Drawer</div>
+            <div class="nav_sub">quick access to the other saved drafts</div>
+            <div class="links"><ul></ul></div>
+        </div>
+    </div>
+</div>
+
+
 <!-- CLEAN TEXT OR START DRAFT -->
 <div class="contain">
     <div id="splitlayout" class="splitlayout">
@@ -39,13 +51,18 @@
         <div class="page page-right">
             <div class="page-inner">
                 <div id="content">
+                    <!-- NAVBAR -->
+                    <div id="nav">
+                        <a href="#" class="back back-left" title="back to home"><i class="fa fa-chevron-left back-left"></i></a>
+                        <a href="#" id="help"><span class="glyphicon glyphicon-info-sign"></span></a>
+                    </div>
+
                     <!-- HEADER  -->
                     <div id="wrapper_header">
                         <div class="header">Editor</div>
                         <div class="sub-header">editting and formatting Constant Contact weekly emails</div> 
-                        <a href="#" class="back back-left" title="back to home"><i class="fa fa-chevron-left back-left"></i></a>
                         <div id="alert1" class="alert alert-info"> 
-                            <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, or start a new draft.
+                            <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, duplicate it, or start a new draft.
                         </div> 
                     </div>
 
@@ -59,7 +76,7 @@
 
                             <!-- BUTTONS -->
                             <div class="button">
-                                <button type="submit" class="btn btn-primary" id="submit">Format</button>
+                                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Format</button>
                             </div>   
                         </form>
 
@@ -77,7 +94,6 @@
                                 <th>Draft Name</th>
                                 <th>Last Saved</th>
                                 <th>Author</th>
-                                <th>Status</th>
                             </tr>
                         </table>
 
@@ -90,9 +106,14 @@
         </div>
 
         <!-- LEFT SIDE -->
-        <div class="page page-left">
+        <div class="page page-left" id="base_content" class="snap-content">
             <div class="page-inner">
-                <a href="#" class="back back-right" title="back to home" id="backhome"><i class="fa fa-chevron-right back-right"></i></a>
+                <!-- NAVBAR -->
+                <div id="nav">
+                    <a href="#" class="back back-right" data-toggle="tooltip" data-placement="left" title="back to home" id="backhome"><i class="fa fa-chevron-right back-right"></i></a>
+                    <a href="#" id="menu2" data-toggle="tooltip" data-placement="right" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+                </div>
+
                 
                 <section id="editor_wrapper">
                     <div id='edit2'></div>
@@ -103,14 +124,6 @@
                     <button type="button" class="btn btn-default" id="clear" data-toggle="tooltip" data-placement="bottom" title="clear the textbox"><i class="fa fa-magic"></i></button>
                     <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
                     <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
-                    <button type="button" class="btn btn-default" id="comment" data-toggle="modal" data-target="#commentsModal" data-toggle="tooltip" data-placement="bottom" title="add a comment for others to see"><span class="glyphicon glyphicon-comment"></span></button>
-                </div>
-
-                <div id="draft_status2">
-                    <label>Draft Status:  </label>
-                    <label class="radio-inline"><input type="radio" name="options" id="open" value="Open">Open</label>
-                    <label class="radio-inline"><input type="radio" name="options" id="closed" value="Closed">Closed</label>
-                    <label class="radio-inline"><input type="radio" name="options" id="finished" value="Completed">Completed</label>
                 </div>
 
                 <p id="message" style="float:left; margin-left:14%;"></p>
@@ -142,21 +155,6 @@
                     <label for="username">Your name</label>
                     <input type="text" class="form-control" id="username" placeholder="Name">
                 </div>
-                <div class="form-group">
-                    <label>Draft Status</label>
-                    <div>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Open" value="Open"> Open
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Closed" value="Closed"> Closed
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="draft_options" id="Completed" value="Completed"> Completed
-                        </label>
-                        <p class="help-block" id="radio_help"><small></small></p>
-                    </div>
-                </div>
             </div>
                 
             <div class="modal-footer">
@@ -186,30 +184,21 @@
     </div>
 </div>
 
-<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body" style="text-align:center;">
-                <div class="form-group">
-                    <h4>Add a comment to this draft for others to see</h4>
-                    <textarea class="form-control" rows="3" style="resize:vertical;"></textarea>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-primary" id="yesadd" onclick="add_comment();">Add Comment</button>
-                    <button type="button" class="btn btn-default" id="dontadd" data-dismiss="modal">Nevermind</button>   
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <script type="text/javascript">
     // to be executed as page loads
     $(function() {
+        $(".btn, .back, #menu2, #backhome").tooltip();
+        $('#help').popover({
+            title: 'Experiencing problems?',
+            placement: 'bottom',
+            html: 'true',
+            trigger: 'click focus',
+            content: '<ul><li>Buttons not working? Try refreshing the page.</li><li> Can\'t save a draft? Try deleting one first.</li>'
+        });
         $('#edit2').editable({inlineMode: false, inverseSkin: true});
         $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
-        $('#save2, #delete, #comment, #draft_status2').hide();
+        $('#save2, #delete, #comment').hide();
         var query = new Parse.Query('drafts');
         query.find({
             success: function(results) {
@@ -230,25 +219,32 @@
                 console.log('error')
             }
         });
-        $("button").tooltip();
+        getDrafts2();
     });
 
     setTimeout(function() {
         var btn1 = document.getElementsByClassName("btn1"),
-            btn2 = document.getElementsByClassName("btn2");
+            btn2 = document.getElementsByClassName("btn2"),
+            btn3 = document.getElementsByClassName("btn3");
         // console.log(btn1.length);
 
         var btn1_click = function() {
             var key = this.getAttribute("draftname");
-            console.log(key);
+            // console.log(key);
             window.location = "/edits/"+key; 
         };
 
         var btn2_click = function() {
             var key = this.getAttribute("draftname");
-            console.log(key);
+            // console.log(key);
             $(this).parent().slideUp("slow");
             deletethis(key); 
+        };
+
+        var btn3_click = function() {
+            var key = this.getAttribute("draftname");
+            // console.log(key);
+            window.location = "/new/"+key; ; 
         };
 
         for (var i = 0; i < btn1.length; i++){
@@ -258,13 +254,27 @@
         for (var j = 0; j < btn2.length; j++){
             btn2[j].addEventListener('click', btn2_click, false);
         }
+
+        for (var k = 0; k < btn3.length; k++){
+            btn3[k].addEventListener('click', btn3_click, false);
+        }
+
+        var list = document.getElementsByClassName("draft_link");
+        var li_click = function() {
+            var key = this.getAttribute("draftname");
+            console.log(key);
+            window.location = "/edits/"+key; 
+        };
+        for (var i = 0; i < list.length; i++){
+            list[i].addEventListener('click', li_click, false);
+        }
     }, 1000);
 
 
-    $('#submit').click(function() {
-        var text = $('#textarea').html();
-        $('#box').val(text);
-    });  
+    // $('#submit').click(function() {
+    //     var text = $('#textarea').html();
+    //     $('#box').val(text);
+    // });  
 
     $("#new").click(function() {
         $('#alert1').hide();
@@ -278,28 +288,50 @@
 
     $('#backhome').click(function() {
         stop();
+        $('#this_snap').hide();
     }); 
 
     $(".side-right > .intro-content").click(function() {
-        $('#content').show();    
+        $('#content').show();
+        $('#this_snap').hide();  
     });
 
     $(".side-left > .intro-content").click(function() {
-        $('#content').hide();   
-    });
+        $('#content').hide();  
+        $('#this_snap').show(); 
+    }); 
 
-    $( "input:radio[name=draft_options]" ).mouseenter(function() {
-        var val = $(this).val();
-        if (val=="Open") {
-            $("#radio_help>small").empty().append("Select 'Open' if you're still editing the draft. (Don't forget to select 'Closed' when you're done editing so others know you're done and they can edit it)");
-        }
-        if (val=="Closed") {
-            $("#radio_help>small").empty().append("Select 'Closed' if you're done editing the draft, but it isn't completed. This will let others know that they can edit the draft now.");
-        }
-        if (val=="Completed") {
-            $("#radio_help>small").empty().append("Select 'Completed' if the draft is ready to be sent out.");
-        }
-    });   
+    // =================  SIDEBAR  =================
+        var snapper = new Snap({
+            element: document.getElementById('base_content'),
+            disable: 'right',
+            touchToDrag: false
+        });
+
+        /*  create cross-browser event handler. */
+        var addEvent = function addEvent(element, eventName, func) {
+          if (element.addEventListener) {
+              return element.addEventListener(eventName, func, false);
+          } else if (element.attachEvent) {
+              return element.attachEvent("on" + eventName, func);
+          }
+        };
+
+        /* when the element with id 'open-left' is clicked, use the public snapper.open() method to slide the content div rightward, to reveal the LEFT menu */
+        addEvent(document.getElementById('menu2'), 'click', function() {
+          snapper.open('left');
+        });
+
+        var menu = document.getElementById('menu2');
+
+        menu.addEventListener('click', function(){
+          if( snapper.state().state=="left" ){
+              snapper.close();
+          } else {
+              snapper.open('left');
+          }
+
+        });  
 </script>
 
 {% endblock %}

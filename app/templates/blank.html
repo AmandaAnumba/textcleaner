@@ -23,8 +23,8 @@
     </div>
 
     <!-- HEADER -->
-    <div class="header">Text Cleaner</div>
-    <div class="sub-header">for use with Constant Contact weekly emails</div>
+    <div class="header" style="margin-bottom: 3%;">Editor</div>
+    <!-- <div class="sub-header">for use with Constant Contact weekly emails</div> -->
     
     <!-- HIDDEN -->
     <p id="draftname">{{key}}</p>
@@ -33,33 +33,34 @@
     <div id="wrapper_form">
         
         <!-- INPUT -->
-        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">       
+        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+            <p class="label_t" style="text-align:left;">original text</p>
             <div id='textarea' contenteditable></div>
             
             <input type='hidden' id='box' name='text' />
 
-            <!-- <textarea class="form-control" name="text" rows="10" contenteditable="true"></textarea> -->    
-
             <!-- BUTTONS -->
             <div class="button">
-                <!-- <button type="button" class="btn btn-default" id="clear" onclick="clear();">Clear</button> -->
-                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Format</button>
             </div>   
         </form>
 
         <!-- OUTPUT -->
-        <section id="editor" class="editor">
-            <div id='edit'></div>
-        </section>
+        <div id="wrapper_output">
+            <p class="label_t" style="text-align:right; margin-right: 4%;">formatted text</p>
+            <section id="editor" class="editor">
+                <div id='edit'></div>
+            </section>
         
-        <div id="btn_group2">
-            <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
-            <button type="button" class="btn btn-default" id="save2" onclick="autosave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
-            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
-            <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
-        </div>
+            <div id="btn_group2">
+                <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+                <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+                <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+                <button type="button" class="btn btn-default" id="full" data-toggle="tooltip" data-placement="bottom" title="expand text area"><span class="glyphicon glyphicon-resize-full"></span></button>
+            </div>
 
-        <p id="message"></p>
+            <p id="message"></p>
+        </div>
     </div>
 </div>
 
@@ -69,13 +70,20 @@
         <div class="modal-content">
             <div class="modal-body">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4>Enter a name to save the draft</h4>
-                <input type="text" id="name" class="form-control" placeholder="examples: weekly7/12, draft1, v1">
+                <div class="form-group">
+                    <label for="name4draft">Name this draft</label>
+                    <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-" or underscores "_"</small></p>
+                </div>
+                <div class="form-group">
+                    <label for="username">Your name</label>
+                    <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
             </div>
                 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
-                <button type="button" class="btn btn-primary" id="savethis" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>     
             </div>
         </div>
     </div>
@@ -92,7 +100,7 @@
                     <li><small>all traces of this draft's existence</small></li>
                 </ul>
                 <div>
-                    <button type="button" class="btn btn-primary" id="yes" onclick="deletethis();">Yeah, do it</button>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="b4delete();">Yeah, do it</button>
                     <button type="button" class="btn btn-default" id="no" data-dismiss="modal">I changed my mind</button>   
                 </div>
             </div>
@@ -102,27 +110,71 @@
 
 
 <script type="text/javascript">
+    // on window load
+    $(function() {
+        $("button, #menu, #home").tooltip();
+        $('#edit').editable({inlineMode: false, inverseSkin: true});
+        $('#save2').hide();
+        getDrafts2();
+        
+        var key = $('#draftname').text();
+        var draft = Parse.Object.extend("drafts");
+        var query = new Parse.Query(draft);
+        query.equalTo("draftname", key);
+        query.first({
+            success: function(results) {
+                var name = results.get('draftname'),
+                    retrieved = results.get('content'),
+                    user = results.get('name'),
+                    content = JSON.parse(retrieved);
+                $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
+                if (content[0] == "") {
+                    // $('#textarea').css({"height": "350px"});
+                    $('form, #full').hide();
+                    $('.label_t').css({"text-align": "center", "margin-right":"0"});
+                    $('#editor').removeClass("editor").addClass("single");
+                    $('#btn_group2, #draft_status, #message').css("margin-right", "20%");
+                    $('.froala-element').css({"height": "300px"});
+                    $('#edit').css({'resize': 'vertical'});
+
+                }
+                else {
+                    $('#textarea').append(content[0]);
+                    $('.froala-element').css({"max-height": "270px"});
+                }
+                
+                
+            },
+            error: function(myObject, error) {
+                console.log("Save failed with error: ", error);
+            }
+        }); 
+    });
     
+    setTimeout(function() {
+        var list = document.getElementsByClassName("draft_link");
+
+        var li_click = function() {
+            var key = this.getAttribute("draftname");
+            console.log(key);
+            window.location = "/edits/"+key; 
+        };
+
+        for (var i = 0; i < list.length; i++){
+            list[i].addEventListener('click', li_click, false);
+        }
+    }, 1000);
+
     $( "#full" ).click(function() {
         $('#editor').toggleClass('editor full');
         $(this).toggleClass('active btn-primary');
         $("#full>span").toggleClass('glyphicon-resize-full glyphicon-resize-small');
         $("form").toggle();
-        $('#btn_group2, #message').toggleClass('shift');
-        $('.froala-element').toggleClass('big');
+        $('#btn_group2, #message, .label_t').toggleClass('shift');
+        $('.froala-element, .froala-element>textarea').toggleClass('big');
     });
 
-    // on window load
-    $(function() {
-        $("button, #menu, #home").tooltip();
-        $('#edit').editable({inlineMode: false, inverseSkin: true});
-        var key = $('#draftname').text();
-        var retrieved = localStorage.getItem(key);
-        var content = JSON.parse(retrieved);
-        $('#save').hide();
-        $('.froala-element').removeClass('f-placeholder').empty().append(content[1]);
-        $('#textarea').append(content[0]);
-    });
+    
 
     // =================  SIDEBAR  =================
         var snapper = new Snap({

@@ -1,4 +1,24 @@
 // old stuff
+
+
+// $('input[name="options"]').change( function() {
+//     var name = $('#draftname').text(),
+//         status = $('input[name=options]:checked').val();
+//     console.log(status);
+//     var draft = Parse.Object.extend("drafts");
+//     var query = new Parse.Query(draft);
+//     query.equalTo("draftname", name);
+//     query.first({
+//         success: function(result) {
+//             result.set("status", status);
+//             result.save();
+//             console.log("status changed and saved");
+//         },
+//         error: function(myObject, error) {
+//             console.log("Save failed with error: ", error);
+//         }
+//     });
+// });
 // localStorage.setItem(name, JSON.stringify(content));
 // for (var i = 0; i < len; ++i) {
     //  var name = localStorage.key(i);
