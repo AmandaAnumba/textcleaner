@@ -16,14 +16,14 @@
 <!-- CONTENT -->
 <div id="content" class="snap-content">
     
-    <!-- FOR SIDEBAR -->
-    <div id="nav">
+    <!-- NAVBAR -->
+    <nav id="nav">
         <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
-        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to your saved drafts"><i class="fa fa-bars fa-lg"></i></a>
-    </div>
+        <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+    </nav>
 
     <!-- HEADER -->
-    <div class="header" style="margin-bottom: 3%;">Editor</div>
+    <header class="header" style="margin-bottom: 3%;">Editor</header>
     <!-- <div class="sub-header">for use with Constant Contact weekly emails</div> -->
     
     <!-- HIDDEN -->
@@ -112,7 +112,6 @@
 <script type="text/javascript">
     // on window load
     $(function() {
-        $("button, #menu, #home").tooltip();
         $('#edit').editable({inlineMode: false, inverseSkin: true});
         $('#save2').hide();
         getDrafts2();
@@ -152,6 +151,7 @@
     });
     
     setTimeout(function() {
+        $("button, #menu, #home").tooltip();
         var list = document.getElementsByClassName("draft_link");
 
         var li_click = function() {

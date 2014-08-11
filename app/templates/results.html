@@ -17,10 +17,10 @@
 <div id="content" class="snap-content">
     
     <!-- NAVBAR -->
-    <div id="nav">
+    <nav id="nav">
         <a href="{{ url_for('index') }}" id="home" data-toggle="tooltip" data-placement="right" title="home"><i class="fa fa-chevron-left"></i></a>
         <a href="#" id="menu" data-toggle="tooltip" data-placement="left" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
-    </div>
+    </nav>
 
     <!-- HEADER -->
     <div class="header" style="margin-bottom: 3%;">Editor</div>
@@ -111,12 +111,11 @@
 <script type="text/javascript">
     // on window load
     $(function() {
-        $("button, #menu, #home").tooltip();
         $('#edit').editable({inlineMode: false, inverseSkin: true});
         var original = $('#textarea').text();
         var output = $('.froala-element').text();
         $('#textarea').empty().append(original);
-        $('.froala-element').empty().removeClass('f-placeholder').append(original);
+        $('.froala-element').empty().removeClass('f-placeholder').append(output);
         $('.froala-element').css({"max-height": "270px"});
         $(".froala-element").children().each(function() {
             $( this ).removeAttr( "class" );
@@ -124,9 +123,41 @@
         });
         $('#save2, #delete, #comment').hide(); 
         getDrafts2();
+
+        // clean the extra spaces
+        var elements = document.getElementsByClassName('froala-element')[0].childNodes;
+        for (var i = 0; i<elements.length; i++) {
+            var ch = elements[i].childNodes;
+
+            if (elements[i].nodeName === "#comment") {
+                document.getElementsByClassName('froala-element')[0].removeChild(document.getElementsByClassName('froala-element')[0].childNodes[i]);
+                i--;
+            }
+
+            else if (elements[i].nodeName === "P") {
+                while (elements[i].lastChild.nodeName === "BR") {
+                    elements[i].removeChild(elements[i].lastChild);
+                }
+            }
+
+            else if (elements[i].nodeName === "SPAN") {
+                while (elements[i].lastChild.nodeName === "BR") {
+                    elements[i].removeChild(elements[i].lastChild);
+                }
+            }
+            
+            for (var j = 0; j < ch.length; j++) {
+                if (ch[j].nodeName === "STRONG" || ch[j].nodeName === "B" || ch[j].nodeName === "A") {
+                    while (ch[j].lastChild.nodeName === "BR") {
+                        ch[j].removeChild(ch[j].lastChild);
+                    }
+                }
+            }
+        }
     });
 
     setTimeout(function() { 
+        $("button, #menu, #home").tooltip();
         var list = document.getElementsByClassName("draft_link");
         var li_click = function() {
             var key = this.getAttribute("draftname");
@@ -136,26 +167,6 @@
         for (var i = 0; i < list.length; i++){
             list[i].addEventListener('click', li_click, false);
         }
-
-        // // clean the extra spaces
-        // var elements = document.getElementsByClassName('froala-element')[0].childNodes;
-        // for (var i = 0; i<elements.length; i++) {
-        //     if (elements[i].nodeName === "#comment") {
-        //         document.getElementsByClassName('froala-element')[0].removeChild(document.getElementsByClassName('froala-element')[0].childNodes[0]);
-        //     }
-
-        //     else if (elements[i].nodeName === "P") {
-        //         while (elements[i].lastChild.nodeName === "BR") {
-        //             elements[i].removeChild(elements[i].lastChild);
-        //         }
-        //     }
-
-        //     else if (elements[i].nodeName === "SPAN") {
-        //         while (elements[i].lastChild.nodeName === "BR") {
-        //             elements[i].removeChild(elements[i].lastChild);
-        //         }
-        //     }
-        // }
     }, 1000);
 
     $( "#full" ).click(function() {

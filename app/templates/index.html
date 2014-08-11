@@ -51,20 +51,20 @@
         <div class="page page-right">
             <div class="page-inner">
                 <div id="content">
+                    
                     <!-- NAVBAR -->
-                    <div id="nav">
-                        <a href="#" class="back back-left" title="back to home"><i class="fa fa-chevron-left back-left"></i></a>
-                        <a href="#" id="help"><span class="glyphicon glyphicon-info-sign"></span></a>
-                    </div>
+                    <nav id="nav">
+                        <a href="#" class="back back-left" data-toggle="tooltip" data-placement="right" title="back to home"><i class="fa fa-chevron-left back-left"></i></a>
+                    </nav>
 
                     <!-- HEADER  -->
-                    <div id="wrapper_header">
+                    <header id="wrapper_header">
                         <div class="header">Editor</div>
-                        <div class="sub-header">editting and formatting Constant Contact weekly emails</div> 
+                        <div id="sub"><span><span class="sub-header">editting and formatting Constant Contact weekly emails </span><a href="#" id="help" class="popover-dismiss" data-toggle="popover" data-placement="right" title="Experiencing problems?" data-content="If some of the buttons below aren't working or you can't find a draft, try refreshing the page."><span class="glyphicon glyphicon-info-sign"></span></a></span></div> 
                         <div id="alert1" class="alert alert-info"> 
                             <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, duplicate it, or start a new draft.
                         </div> 
-                    </div>
+                    </header>
 
                     <!--INPUT TEXT AREA -->
                     <div id="wrapper_form">
@@ -109,11 +109,10 @@
         <div class="page page-left" id="base_content" class="snap-content">
             <div class="page-inner">
                 <!-- NAVBAR -->
-                <div id="nav">
+                <nav id="nav">
                     <a href="#" class="back back-right" data-toggle="tooltip" data-placement="left" title="back to home" id="backhome"><i class="fa fa-chevron-right back-right"></i></a>
                     <a href="#" id="menu2" data-toggle="tooltip" data-placement="right" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
-                </div>
-
+                </nav>
                 
                 <section id="editor_wrapper">
                     <div id='edit2'></div>
@@ -188,13 +187,8 @@
 <script type="text/javascript">
     // to be executed as page loads
     $(function() {
-        $(".btn, .back, #menu2, #backhome").tooltip();
-        $('#help').popover({
-            title: 'Experiencing problems?',
-            placement: 'bottom',
-            html: 'true',
-            trigger: 'click focus',
-            content: '<ul><li>Buttons not working? Try refreshing the page.</li><li> Can\'t save a draft? Try deleting one first.</li>'
+        $('.popover-dismiss').popover({
+            trigger: 'focus'
         });
         $('#edit2').editable({inlineMode: false, inverseSkin: true});
         $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
@@ -223,6 +217,7 @@
     });
 
     setTimeout(function() {
+        $(".btn, .back, #menu2, #backhome").tooltip();
         var btn1 = document.getElementsByClassName("btn1"),
             btn2 = document.getElementsByClassName("btn2"),
             btn3 = document.getElementsByClassName("btn3");
