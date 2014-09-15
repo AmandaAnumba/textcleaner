@@ -117,7 +117,7 @@
 		margin-right: 4%;
 	}
 
-	#submit, #new, #trash, #save {
+	#submit, #new, #trash, #save, #textonly {
 		padding: 10px 10px 8px 10px;
 	}
 
@@ -261,7 +261,7 @@
 /* ------------------- front ------------------- */
 /* --------------------------------------------- */
 	#editor_wrapper {
-		margin: 15% 14% 0 14%;
+		margin: 0 14% 0 14%;
 	}
 
 	#edit2 {
@@ -278,6 +278,12 @@
 		/*margin: 13% 0 0 0;*/
 	}
 
+	#backhome {
+		color:black;
+		padding: 2px 10px 2px 20px;
+		font-size: 22px;
+		line-height: 44px;
+	}
 
 
 /* -------------------- SIDEBAR  ---------------------- */
