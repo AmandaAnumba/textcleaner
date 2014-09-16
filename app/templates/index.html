@@ -209,10 +209,10 @@
 <script type="text/javascript">
     // to be executed as page loads
     $(function() {
+        $('#content2, #nav, #wrapper_form').hide();
         $('.popover-dismiss').popover({
             trigger: 'click hover'
         });
-        $('#content2, #nav').hide();
         $('#edit2').editable({inlineMode: false, inverseSkin: true});
         $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
         $('#save2, #delete, #comment').hide();
@@ -227,7 +227,6 @@
                     return
                 }
                 else {
-                    $('#wrapper_form').hide();
                     $('#wrapper_draft, #alert1').show();
                     getDrafts();
                 }
