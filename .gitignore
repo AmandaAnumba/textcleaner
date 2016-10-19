@@ -1,0 +1,7 @@
+venv
+_macEnv
+.DS_Store
+*.py[co]
+*.pyc
+__pycache__
+__pycache__/*

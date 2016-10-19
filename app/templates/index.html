@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="content">         
+    <!-- NAVBAR -->
+    <nav id="nav">
+        <a href="#" data-toggle="tooltip" data-placement="right" title="back to drafts home" id="backhome"><i class="fa fa-chevron-left"></i></a>
+    </nav>
+
+    <!-- HEADER  -->
+    <header id="wrapper_header">
+        <div class="header">Editor</div>
+        <div id="sub"><span><span class="sub-header">editting and formatting Constant Contact weekly emails </span><a href="#" id="help" class="popover-dismiss" data-toggle="popover" data-placement="right" title="Experiencing problems?" data-content="Try refreshing the page if the buttons below aren't working or you can't find a draft."><span class="glyphicon glyphicon-info-sign"></span></a></span></div> 
+        <div id="alert1" class="alert alert-info"> 
+            <strong>Heads Up! </strong> Here are your currently saved drafts. You can continue with a draft, trash it, duplicate it, or start a new draft.
+        </div> 
+    </header>
+
+    <!--INPUT TEXT AREA -->
+    <div id="wrapper_form">
+        <form class="form-horizontal" role="form" method='post' action="{{ url_for('results') }}">
+            <p class="label_t" style="text-align:left;">enter text here</p>
+            <div id='textarea' contenteditable></div>
+            
+            <input type='hidden' id='box' name='text' />
+
+            <!-- BUTTONS -->
+            <div class="button">
+                <button type="submit" class="btn btn-primary" id="submit" onclick="submitthis();">Format</button>
+            </div>   
+        </form>
+
+        <div id="wrapper_output">
+            <p class="label_t" style="text-align:right; margin-right: 4%;">formatted text appears here</p>
+            <div id="output"></div>
+        </div>
+    </div>
+
+
+    <!-- LIST OF DRAFTS -->
+    <div id="wrapper_draft">
+        <table class="table table-condensed">
+            <tr>
+                <th>Draft Name</th>
+                <th style="padding-left: 30px;">Last Saved</th>
+                <th>Author</th>
+            </tr>
+        </table>
+
+        <div class="button">
+            <button type="button" class="btn btn-primary" id="new" data-toggle="tooltip" data-placement="bottom" title="start a new draft or format text">Start fresh</button>
+            <button type="button" class="btn btn-default" id="textonly" data-toggle="tooltip" data-placement="bottom" title="use only the text editor">Text Editor</button>
+        </div>
+    </div>
+
+    <!-- TEXT EDITOR -->
+    <div id="content2">
+        <!-- editor -->
+        <section id="editor_wrapper">
+            <div id='edit2'></div>
+        </section>
+
+        <!-- buttons -->
+        <div id="btn_group3">
+            <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+            <button type="button" class="btn btn-default" id="clear" data-toggle="tooltip" data-placement="bottom" title="clear the textbox"><i class="fa fa-magic"></i></button>
+            <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+            <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+        </div>
+
+        <p id="message" style="float:left; margin-left:14%;"></p>
+
+        <p id="draftname"></p>
+    </div>
+</div>
+
+<!-- SIDEBAR PANEL 
+<div class="snap-drawers" id="this_snap">
+    <div class="snap-drawer snap-drawer-left">
+        <div>
+            <div class="nav_header">Drafts Drawer</div>
+            <div class="nav_sub">quick access to the other saved drafts</div>
+            <div class="links"><ul></ul></div>
+        </div>
+    </div>
+</div>-->
+
+
+<!-- CLEAN TEXT OR START DRAFT 
+<div class="contain">
+    <div id="splitlayout" class="splitlayout">-->
+        
+        <!-- THE FRONT/INTRO 
+        <div class="intro">
+            <div class="side side-left">
+                <div class="intro-content">
+                    <div class="profile">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-file-text fa-stack-1x" style="color: #707070;"></i>
+                        </span>
+                    </div>
+                    <h1><span>Write </span><span>click here to write into the text editor</span></h1>
+                </div>
+                <div class="overlay"></div>
+            </div>
+            
+            <div class="side side-right">
+                <div class="intro-content">
+                    <div class="profile">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </div>
+                    <h1><span>Continue </span><span>edit a draft or click to format new text</span></h1>
+                    <p id="count" style="color:black;"><small></small></p>
+                </div>
+                <div class="overlay"></div>
+            </div>
+        </div>-->
+
+        <!-- RIGHT SIDE 
+        <div class="page page-right">
+            <div class="page-inner">
+                
+            </div>      
+        </div>-->
+
+        <!-- LEFT SIDE 
+        <div class="page page-left" id="base_content" class="snap-content">
+            <div class="page-inner">-->
+                <!-- NAVBAR 
+                <nav id="nav">
+                    <a href="#" class="back back-right" data-toggle="tooltip" data-placement="left" title="back to home" id="backhome"><i class="fa fa-chevron-right back-right"></i></a>
+                    <a href="#" id="menu2" data-toggle="tooltip" data-placement="right" title="shortcut to the saved drafts"><i class="fa fa-bars fa-lg"></i></a>
+                </nav>
+                
+                <section id="editor_wrapper">
+                    <div id='edit2'></div>
+                </section>
+        
+                <div id="btn_group3">
+                    <button type="button" class="btn btn-primary" id="save" data-toggle="modal" data-target="#saveModal">Save as Draft</button>
+                    <button type="button" class="btn btn-default" id="clear" data-toggle="tooltip" data-placement="bottom" title="clear the textbox"><i class="fa fa-magic"></i></button>
+                    <button type="button" class="btn btn-default" id="save2" onclick="selfsave();" data-toggle="tooltip" data-placement="bottom" title="save this draft"><span class="glyphicon glyphicon-floppy-save"></span></button>
+                    <button type="button" class="btn btn-default" id="delete" data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip" data-placement="bottom" title="delete this draft"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+
+                <p id="message" style="float:left; margin-left:14%;"></p>
+
+                <p id="draftname"></p>
+            </div>
+        </div>
+
+    </div>
+</div>-->
+
+
+<!-- <script src="{{ url_for('static', filename='plugins/SplitLayout/js/classie.js') }}"></script> -->
+<!-- <script src="{{ url_for('static', filename='plugins/SplitLayout/js/cbpSplitLayout.js') }}"></script> -->
+
+
+<!-- Modals -->
+<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <div class="form-group">
+                    <label for="name4draft">Name this draft</label>
+                    <input type="text" class="form-control" id="name" placeholder="examples: weekly 7-12-14, draft1, v1">
+                    <p class="help-block"><small>Please do not include any special characters, except for dashes "-" or underscores "_"</small></p>
+                </div>
+                <div class="form-group">
+                    <label for="username">Your name</label>
+                    <input type="text" class="form-control" id="username" placeholder="Name">
+                </div>
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="savethis();">Save it!</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>     
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center;">
+                <h4>Are you sure you want to delete this? Here's what you're deleting:</h4>
+                <ul style="text-align:left;">
+                    <li><small>everything in this textbox</small></li>
+                    <li><small>this current draft that's saved in the database</small></li>
+                    <li><small>all traces of this draft's existence</small></li>
+                </ul>
+                <div>
+                    <button type="button" class="btn btn-primary" id="yes" onclick="b4delete();">Yeah, do it</button>
+                    <button type="button" class="btn btn-default" id="no" data-dismiss="modal">No, I changed my mind</button>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // to be executed as page loads
+    $(function() {
+        $('#content2, #nav, #wrapper_form').hide();
+        $('.popover-dismiss').popover({
+            trigger: 'click hover'
+        });
+        $('#edit2').editable({inlineMode: false, inverseSkin: true});
+        $('.froala-element').removeClass('f-placeholder').css({height: "360px"});
+        $('#save2, #delete, #comment').hide();
+        var query = new Parse.Query('drafts');
+        query.find({
+            success: function(results) {
+                $('#count>small').empty().append(results.length + ' draft(s) available');
+                if (results.length == 0) {
+                    console.log("there's nothing in the database");
+                    $('#wrapper_draft, #alert1').hide();
+                    $('#wrapper_form').show();
+                    return
+                }
+                else {
+                    $('#wrapper_draft, #alert1').show();
+                    getDrafts();
+                }
+            },
+            error: function(error) {
+                console.log('error')
+            }
+        });
+        getDrafts2();
+    });
+
+    setTimeout(function() {
+        $(".btn, .back, #menu2, #backhome").tooltip();
+        var btn1 = document.getElementsByClassName("btn1"),
+            btn2 = document.getElementsByClassName("btn2"),
+            btn3 = document.getElementsByClassName("btn3");
+        // console.log(btn1.length);
+
+        var btn1_click = function() {
+            var key = this.getAttribute("draftname");
+            // console.log(key);
+            window.location = "/edits/"+key; 
+        };
+
+        var btn2_click = function() {
+            var key = this.getAttribute("draftname");
+            // console.log(key);
+            $(this).parent().slideUp("slow");
+            deletethis(key); 
+        };
+
+        var btn3_click = function() {
+            var key = this.getAttribute("draftname");
+            // console.log(key);
+            window.location = "/new/"+key; ; 
+        };
+
+        for (var i = 0; i < btn1.length; i++){
+            btn1[i].addEventListener('click', btn1_click, false);
+        }
+
+        for (var j = 0; j < btn2.length; j++){
+            btn2[j].addEventListener('click', btn2_click, false);
+        }
+
+        for (var k = 0; k < btn3.length; k++){
+            btn3[k].addEventListener('click', btn3_click, false);
+        }
+
+        var list = document.getElementsByClassName("draft_link");
+        var li_click = function() {
+            var key = this.getAttribute("draftname");
+            console.log(key);
+            window.location = "/edits/"+key; 
+        };
+        for (var i = 0; i < list.length; i++){
+            list[i].addEventListener('click', li_click, false);
+        }
+    }, 1000);
+
+
+    // $('#submit').click(function() {
+    //     var text = $('#textarea').html();
+    //     $('#box').val(text);
+    // });  
+
+    $("#new").click(function() {
+        $('#alert1').hide();
+        $('#wrapper_draft').hide();
+        $('#nav, #wrapper_form').show();
+        $('#textarea').empty();
+        $('#output').empty();
+    });
+
+    $("#textonly").click(function() {
+        $('#alert1, #wrapper_draft').hide();
+        $('#nav, #content2').show();
+    });
+
+    document.getElementById("clear").addEventListener('click', clear, false);
+
+    $('#backhome').click(function() {
+        stop();
+
+        if ($('#wrapper_form').is(':visible')) {
+            $('#wrapper_form, #nav').hide();
+        }
+
+        if ($('#content2').is(':visible')) {
+            $('#content2, #nav').hide();
+        }
+
+        $('#alert1, #wrapper_draft').show();
+    }); 
+
+    /*$(".side-right > .intro-content").click(function() {
+        $('#content').show();
+        $('#this_snap').hide();  
+    });
+
+    $(".side-left > .intro-content").click(function() {
+        $('#content').hide();  
+        $('#this_snap').show(); 
+    }); */
+</script>
+
+{% endblock %}
+
+
+            
