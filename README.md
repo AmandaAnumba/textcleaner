@@ -12,6 +12,7 @@ Dependencies
 	| Heroku for deployment
 - Terminal/PowerShell
 - Text Editor (ex: Sublime Text 3)
+- Parse Cloud Database (retired)
 
 
 Usage
