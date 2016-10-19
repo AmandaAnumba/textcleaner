@@ -24,6 +24,6 @@ To edit
 
 Edit `cleaner.py` to enhance the text formatting process. Then run `python cleaner.py` to test it and make sure everything is working how you want it to. 
 
-To view locally, `cd app` in your terminal and run `python views.py`. Then go to `localhost:5000` in your internet browser.  
+To view locally, run `python run.py`. Then go to `localhost:1334` in your browser.  
 
 Edit `views.py` to control how the html front-end interacts with the python back-end using Flask. If you are not familiar with Flask, check out a few Python Flask tutorials.  

@@ -5,8 +5,6 @@ from flask import Flask, render_template, request, url_for
 
 from .cleaner import *
 
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
